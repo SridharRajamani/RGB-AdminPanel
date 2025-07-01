@@ -122,6 +122,15 @@ const NavigationSidebar = () => {
 
   return (
     <>
+      {/* Mobile Hamburger Trigger Button - place this in your header/topbar in real usage */}
+      <button
+        data-mobile-menu-trigger
+        className="lg:hidden fixed top-4 left-4 z-[201] p-2 bg-white rounded shadow"
+        onClick={() => setIsMobileMenuOpen(true)}
+        aria-label="Open sidebar menu"
+      >
+        <Icon name="Menu" size={24} />
+      </button>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:z-100 lg:w-60 lg:flex-col">
         <div className="flex flex-col flex-1 min-h-0 bg-surface border-r border-border">

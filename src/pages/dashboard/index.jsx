@@ -17,7 +17,7 @@ const Dashboard = () => {
       <AlertCenter />
       
       {/* Main Content */}
-      <main className={`${isSidebarOpen ? 'ml-60' : ''} pt-16 transition-all duration-200`}>
+      <main className={`${isSidebarOpen ? 'lg:ml-60' : ''} pt-16 transition-all duration-200`}>
         <div className="flex flex-col xl:flex-row gap-8 p-6">
           {/* Left Content Area */}
           <div className="flex-1">
@@ -37,7 +37,7 @@ const Dashboard = () => {
       </main>
 
       {/* Footer */}
-      <footer className={`${isSidebarOpen ? 'ml-60' : ''} bg-surface border-t border-border mt-12`}>
+      <footer className={`${isSidebarOpen ? 'lg:ml-60' : ''} bg-surface border-t border-border mt-12`}>
         <div className="px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
