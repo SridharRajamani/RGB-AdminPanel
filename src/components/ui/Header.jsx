@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../AppIcon';
 import Button from './Button';
-
+import logo from "../../Images/Logo.svg"
 const Header = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -22,7 +22,7 @@ const Header = () => {
         {/* Logo Section */}
         <div className="flex items-center space-x-3">
           <Link to="/dashboard" className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-150">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+            {/* <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
               <svg
                 width="24"
                 height="24"
@@ -53,7 +53,8 @@ const Header = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-            </div>
+            </div> */}
+            <img src={logo} alt="Rotary Gulmohar"  width={200}  />
             <div className="hidden sm:block">
               <h1 className="text-xl font-heading font-semibold text-text-primary">
                 Rotary Gulmohar
