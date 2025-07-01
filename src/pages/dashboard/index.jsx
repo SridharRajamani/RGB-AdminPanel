@@ -1,0 +1,154 @@
+import React, { useState } from 'react';
+import Header from '../../components/ui/Header';
+import NavigationSidebar from '../../components/ui/NavigationSidebar';
+import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
+import AlertCenter from '../../components/ui/AlertCenter';
+import DashboardHeader from './components/DashboardHeader';
+import SummaryWidgets from './components/SummaryWidgets';
+import QuickActions from './components/QuickActions';
+import AlertSidebar from './components/AlertSidebar';
+
+const Dashboard = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+      <AlertCenter />
+      
+      {/* Main Content */}
+      <main className={`${isSidebarOpen ? 'ml-60' : ''} pt-16 transition-all duration-200`}>
+        <div className="flex flex-col xl:flex-row gap-8 p-6">
+          {/* Left Content Area */}
+          <div className="flex-1">
+            <BreadcrumbNavigation />
+            <DashboardHeader />
+            <SummaryWidgets />
+            <QuickActions />
+          </div>
+
+          {/* Right Sidebar - Alert Center */}
+          <div className="xl:w-80 xl:flex-shrink-0">
+            <div className="sticky top-24">
+              <AlertSidebar />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className={`${isSidebarOpen ? 'ml-60' : ''} bg-surface border-t border-border mt-12`}>
+        <div className="px-6 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="text-white"
+                >
+                  <path
+                    d="M12 2L2 7L12 12L22 7L12 2Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2 17L12 22L22 17"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2 12L12 17L22 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-text-primary">
+                  Rotary Gulmohar Dashboard
+                </p>
+                <p className="text-xs text-text-secondary">
+                  Club Management System
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+              <div className="flex items-center space-x-4 text-sm text-text-secondary">
+                <a href="#" className="hover:text-primary transition-colors duration-150">
+                  Privacy Policy
+                </a>
+                <a href="#" className="hover:text-primary transition-colors duration-150">
+                  Terms of Service
+                </a>
+                <a href="#" className="hover:text-primary transition-colors duration-150">
+                  Support
+                </a>
+              </div>
+              <div className="text-xs text-text-muted">
+                © {new Date().getFullYear()} Rotary Gulmohar. All rights reserved.
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Footer Info */}
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+              <div>
+                <h4 className="text-sm font-medium text-text-primary mb-2">
+                  Contact Information
+                </h4>
+                <p className="text-xs text-text-secondary">
+                  Email: admin@rotarygulmohar.org
+                </p>
+                <p className="text-xs text-text-secondary">
+                  Phone: +91 98765 43210
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium text-text-primary mb-2">
+                  Club Details
+                </h4>
+                <p className="text-xs text-text-secondary">
+                  Charter Date: 15th March 1995
+                </p>
+                <p className="text-xs text-text-secondary">
+                  District: 3141
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium text-text-primary mb-2">
+                  System Status
+                </h4>
+                <div className="flex items-center justify-center md:justify-start space-x-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span className="text-xs text-success">All systems operational</span>
+                </div>
+                <p className="text-xs text-text-muted mt-1">
+                  Last updated: {new Date().toLocaleTimeString('en-IN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Dashboard;
