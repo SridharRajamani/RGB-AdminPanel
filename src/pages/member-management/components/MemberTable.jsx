@@ -85,6 +85,15 @@ const MemberTable = ({
   const isAllSelected = selectedMembers.length === paginatedMembers.length && paginatedMembers.length > 0;
   const isIndeterminate = selectedMembers.length > 0 && selectedMembers.length < paginatedMembers.length;
 
+  // Add a helper to highlight the search term
+  function highlightText(text, searchTerm) {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'ig');
+    return text.split(regex).map((part, i) =>
+      regex.test(part) ? <mark key={i} style={{ background: '#ffe066', padding: 0 }}>{part}</mark> : part
+    );
+  }
+
   return (
     <div className="bg-surface rounded-lg border border-border">
       {/* Table Header with Search and Actions */}
@@ -177,7 +186,7 @@ const MemberTable = ({
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-text-primary">{member.name}</p>
+                      <p className="text-sm font-medium text-text-primary">{highlightText(member.name, searchTerm)}</p>
                       <p className="text-xs text-text-muted">{member.designation}</p>
                     </div>
                   </div>
@@ -262,7 +271,7 @@ const MemberTable = ({
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-text-primary">{member.name}</p>
+                    <p className="text-sm font-medium text-text-primary">{highlightText(member.name, searchTerm)}</p>
                     <p className="text-xs text-text-muted">{member.designation}</p>
                   </div>
                 </div>

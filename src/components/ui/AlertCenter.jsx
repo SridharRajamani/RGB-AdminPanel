@@ -4,6 +4,7 @@ import Button from './Button';
 
 const AlertCenter = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [filter, setFilter] = useState('all');
   const [alerts, setAlerts] = useState([
     {
       id: 1,
@@ -56,8 +57,7 @@ const AlertCenter = () => {
       actionRequired: false
     }
   ]);
-
-  const [filter, setFilter] = useState('all');
+  const pendingCount = alerts.filter(alert => alert.actionRequired).length;
 
   const toggleAlertCenter = () => {
     setIsOpen(!isOpen);
@@ -121,8 +121,6 @@ const AlertCenter = () => {
     return alert.category === filter;
   });
 
-  const pendingCount = alerts.filter(alert => alert.actionRequired).length;
-
   // Close alert center when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -140,18 +138,18 @@ const AlertCenter = () => {
   return (
     <>
       {/* Desktop Alert Center */}
-      <div className="hidden lg:block fixed right-6 top-20 z-250">
+      <div className="hidden lg:block   z-250">
         <div className="relative">
           <Button
             variant="primary"
             size="md"
+            style={{ backgroundColor: 'transparent', padding: 5 }}
             iconName="Bell"
             iconSize={20}
-            onClick={toggleAlertCenter}
-            className="relative shadow-lg"
+            onClick={toggleAlertCenter} 
             data-alert-trigger
           >
-            Alerts
+            
             {pendingCount > 0 && (
               <span className="absolute -top-2 -right-2 w-6 h-6 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center">
                 {pendingCount}

@@ -17,10 +17,11 @@ const QuickActions = ({ onActionSelect, recipientGroups, selectedRecipients, onR
     {
       id: 'newsletter',
       title: 'Create Newsletter',
-      description: 'Design and send newsletter',
+      description: 'Design and share on social media',
       icon: 'FileText',
       color: 'bg-secondary',
-      textColor: 'text-secondary-foreground'
+      textColor: 'text-secondary-foreground',
+      badge: 'Social Share'
     },
     {
       id: 'announcement',
@@ -63,9 +64,16 @@ const QuickActions = ({ onActionSelect, recipientGroups, selectedRecipients, onR
                   <Icon name={action.icon} size={18} className={action.textColor} />
                 </div>
                 <div className="flex-1 text-left">
-                  <h4 className="text-sm font-medium text-text-primary group-hover:text-primary">
-                    {action.title}
-                  </h4>
+                  <div className="flex items-center space-x-2">
+                    <h4 className="text-sm font-medium text-text-primary group-hover:text-primary">
+                      {action.title}
+                    </h4>
+                    {action.badge && (
+                      <span className="px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                        {action.badge}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-text-muted">
                     {action.description}
                   </p>

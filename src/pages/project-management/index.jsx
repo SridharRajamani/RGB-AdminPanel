@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -9,8 +9,9 @@ import ProjectFilters from './components/ProjectFilters';
 import CreateProjectModal from './components/CreateProjectModal';
 import ProjectStatsSidebar from './components/ProjectStatsSidebar';
 import ProjectListView from './components/ProjectListView';
+import Icon from '../../components/AppIcon';
 
-const ProjectManagement = () => {
+const ProjectManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
   const [currentView, setCurrentView] = useState('board'); // board, list, calendar
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [filters, setFilters] = useState({
@@ -36,11 +37,11 @@ const ProjectManagement = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+      <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
       {/* Main Content */}
-      <main className={`${isSidebarOpen ? 'ml-60' : ''} pt-16 transition-all duration-200`}>
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} pt-16 transition-all duration-200`}>
         <div className="flex flex-col xl:flex-row gap-8 p-6">
           {/* Left Content Area */}
           <div className="flex-1">
@@ -49,9 +50,14 @@ const ProjectManagement = () => {
             {/* Page Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <h1 className="text-2xl font-heading font-bold text-text-primary">
-                  Projects & Initiatives
-                </h1>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                    <Icon name="FolderOpen" size={24} color="white" />
+                  </div>
+                  <h1 className="text-3xl font-heading font-bold text-text-primary">
+                    Projects & Initiatives
+                  </h1>
+                </div>
                 <p className="text-text-secondary mt-1">
                   Track and oversee club projects from conception to completion
                 </p>

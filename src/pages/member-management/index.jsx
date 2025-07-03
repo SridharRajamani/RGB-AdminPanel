@@ -4,6 +4,7 @@ import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
 import AlertCenter from '../../components/ui/AlertCenter';
 import Button from '../../components/ui/Button';
+import Icon from '../../components/AppIcon';
 
 
 // Import components
@@ -12,7 +13,7 @@ import MemberFilters from './components/MemberFilters';
 import MembershipSummary from './components/MembershipSummary';
 import MemberModal from './components/MemberModal';
 
-const MemberManagement = () => {
+const MemberManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
   // Mock data for members
   const [members] = useState([
     {
@@ -310,21 +311,28 @@ const MemberManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mt-12">
       <Header />
-      <NavigationSidebar />
+      <NavigationSidebar isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
-      <main className="main-content-offset">
+      <main className={`${isSidebarCollapsed ? 'ml-20' : 'ml-60'} transition-all duration-200`}>
         <div className="p-6">
           <BreadcrumbNavigation />
           
           {/* Page Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-heading font-bold text-text-primary mb-2">
-                Member Management
-              </h1>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="Users" size={24} color="white" />
+                </div>
+                <h1
+                  className="text-3xl font-heading font-bold text-text-primary mb-2" 
+                >
+                  Member Management
+                </h1>
+              </div>
               <p className="text-text-secondary">
                 Manage club members, track membership status, and handle member operations
               </p>

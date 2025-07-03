@@ -92,6 +92,15 @@ const EventList = ({ events, onEditEvent, onDuplicateEvent, onCancelEvent, onVie
     return eventDate >= today;
   };
 
+  // Add a helper to highlight the search term
+  function highlightText(text, searchTerm) {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'ig');
+    return text.split(regex).map((part, i) =>
+      regex.test(part) ? <mark key={i} style={{ background: '#ffe066', padding: 0 }}>{part}</mark> : part
+    );
+  }
+
   return (
     <div className="bg-surface rounded-lg border border-border">
       {/* Header */}
@@ -173,7 +182,7 @@ const EventList = ({ events, onEditEvent, onDuplicateEvent, onCancelEvent, onVie
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h4 className="text-lg font-medium text-text-primary truncate">
-                          {event.title}
+                          {highlightText(event.title, searchQuery)}
                         </h4>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(event.status)}`}>
                           {event.status}

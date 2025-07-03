@@ -257,6 +257,15 @@ const ProjectListView = ({ filters }) => {
     }
   };
 
+  // Add a helper to highlight the search term
+  function highlightText(text, searchTerm) {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'ig');
+    return text.split(regex).map((part, i) =>
+      regex.test(part) ? <mark key={i} style={{ background: '#ffe066', padding: 0 }}>{part}</mark> : part
+    );
+  }
+
   return (
     <div className="bg-surface rounded-lg border border-border overflow-hidden">
       {/* Table Header */}
@@ -376,7 +385,7 @@ const ProjectListView = ({ filters }) => {
                     <td className="px-4 py-4">
                       <div>
                         <div className="text-sm font-medium text-text-primary">
-                          {project.title}
+                          {highlightText(project.title, filters?.searchTerm)}
                         </div>
                         <div className="text-xs text-text-secondary line-clamp-1">
                           {project.description}
@@ -427,7 +436,7 @@ const ProjectListView = ({ filters }) => {
                             key={index}
                             className="inline-flex px-2 py-1 text-xs bg-surface-secondary text-text-primary rounded"
                           >
-                            {member}
+                            {highlightText(member, filters?.searchTerm)}
                           </span>
                         ))}
                         {project.assigned?.length > 2 && (

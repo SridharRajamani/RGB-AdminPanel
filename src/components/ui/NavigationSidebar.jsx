@@ -1,48 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Icon from '../AppIcon';
 import Button from './Button';
 
-const NavigationSidebar = () => {
+const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, logout, hasPermission } = useAuth();
 
   const navigationItems = [
     {
       label: 'Dashboard',
       path: '/dashboard',
       icon: 'LayoutDashboard',
-      description: 'Overview and metrics'
+      description: 'Overview and metrics',
+      permission: 'dashboard'
     },
     {
       label: 'Members',
       path: '/member-management',
       icon: 'Users',
-      description: 'Member management'
+      description: 'Member management',
+      permission: 'member_management'
     },
     {
       label: 'Events',
       path: '/event-management',
       icon: 'Calendar',
-      description: 'Event planning'
+      description: 'Event planning',
+      permission: 'event_management'
     },
     {
       label: 'Projects',
       path: '/project-management',
       icon: 'FolderOpen',
-      description: 'Project tracking'
+      description: 'Project tracking',
+      permission: 'project_management'
     },
     {
       label: 'Finance',
       path: '/financial-reports',
       icon: 'DollarSign',
-      description: 'Financial reports'
+      description: 'Financial reports',
+      permission: 'financial_reports'
     },
     {
       label: 'Communications',
       path: '/communication-center',
       icon: 'MessageSquare',
-      description: 'Announcements & newsletters'
+      description: 'Announcements & newsletters',
+      permission: 'communication_center'
+    }
+  ];
+
+  const adminItems = [
+    {
+      label: 'User Management',
+      path: '/admin/users',
+      icon: 'UserCog',
+      description: 'Manage admin users',
+      permission: 'all'
     }
   ];
 
@@ -82,60 +100,105 @@ const NavigationSidebar = () => {
   };
 
   const SidebarContent = () => (
-    <nav className="flex-1 px-4 py-6 space-y-2">
-      {navigationItems.map((item) => {
+    <nav className={`flex-1 ${isSidebarCollapsed ? 'px-2' : 'px-4'} py-6 space-y-2`}>
+      {/* Main Navigation */}
+      {navigationItems.filter(item => hasPermission(item.permission)).map((item) => {
         const isActive = isActiveRoute(item.path);
-        
+
         return (
           <Link
             key={item.path}
             to={item.path}
             className={`
-              group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-150
-              ${isActive 
-                ? 'bg-primary text-primary-foreground shadow-md' 
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+              group flex items-center ${isSidebarCollapsed ? 'justify-center' : ''} px-3 py-3 text-sm font-medium rounded-lg transition-all duration-150
+              ${isActive
+                ? 'bg-white text-[#252569] shadow-md'
+                : 'text-text-secondary hover:text-white hover:bg-[rgba(255,255,255,0.5)]'
               }
             `}
+            title={isSidebarCollapsed ? item.label : undefined}
           >
-            <Icon 
-              name={item.icon} 
-              size={20} 
-              className={`mr-3 flex-shrink-0 ${isActive ? 'text-primary-foreground' : 'text-text-muted group-hover:text-text-primary'}`}
+            <Icon
+              name={item.icon}
+              size={20}
+              className={`mr-3 flex-shrink-0 ${isActive ? 'text-[#252569]' : 'text-text-muted group-hover:text-white'}`}
             />
-            <div className="flex-1 min-w-0">
-              <p className={`font-medium ${isActive ? 'text-primary-foreground' : ''}`}>
-                {item.label}
-              </p>
-              <p className={`text-xs mt-0.5 ${isActive ? 'text-primary-100' : 'text-text-muted group-hover:text-text-secondary'}`}>
-                {item.description}
-              </p>
-            </div>
+            {!isSidebarCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className={`font-medium ${isActive ? 'text-[#252569]' : 'group-hover:text-white'}`}>
+                  {item.label}
+                </p>
+                <p className={`text-xs mt-0.5 ${isActive ? 'text-[#252569]' : 'text-text-muted group-hover:text-white'}`}>
+                  {item.description}
+                </p>
+              </div>
+            )}
             {isActive && (
-              <div className="w-2 h-2 bg-primary-foreground rounded-full ml-2 flex-shrink-0" />
+              <div className="w-2 h-2 rounded-full ml-2 flex-shrink-0" style={{ backgroundColor: '#252569' }} />
             )}
           </Link>
         );
       })}
+
+      {/* Admin Section */}
+      {adminItems.some(item => hasPermission(item.permission)) && (
+        <>
+          <div className="pt-4 pb-2">
+            {!isSidebarCollapsed && (
+              <p className="px-3 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                Administration
+              </p>
+            )}
+          </div>
+          {adminItems.filter(item => hasPermission(item.permission)).map((item) => {
+            const isActive = isActiveRoute(item.path);
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`
+                  group flex items-center ${isSidebarCollapsed ? 'justify-center' : ''} px-3 py-3 text-sm font-medium rounded-lg transition-all duration-150
+                  ${isActive
+                    ? 'bg-white text-[#252569] shadow-md'
+                    : 'text-text-secondary hover:text-white hover:bg-[rgba(255,255,255,0.5)]'
+                  }
+                `}
+                title={isSidebarCollapsed ? item.label : undefined}
+              >
+                <Icon
+                  name={item.icon}
+                  size={20}
+                  className={`mr-3 flex-shrink-0 ${isActive ? 'text-[#252569]' : 'text-text-muted group-hover:text-white'}`}
+                />
+                {!isSidebarCollapsed && (
+                  <div className="flex-1 min-w-0">
+                    <p className={`font-medium ${isActive ? 'text-[#252569]' : 'group-hover:text-white'}`}>
+                      {item.label}
+                    </p>
+                    <p className={`text-xs mt-0.5 ${isActive ? 'text-[#252569]' : 'text-text-muted group-hover:text-white'}`}>
+                      {item.description}
+                    </p>
+                  </div>
+                )}
+                {isActive && (
+                  <div className="w-2 h-2 rounded-full ml-2 flex-shrink-0" style={{ backgroundColor: '#252569' }} />
+                )}
+              </Link>
+            );
+          })}
+        </>
+      )}
     </nav>
   );
 
   return (
     <>
-      {/* Mobile Hamburger Trigger Button - place this in your header/topbar in real usage */}
-      <button
-        data-mobile-menu-trigger
-        className="lg:hidden fixed top-4 left-4 z-[201] p-2 bg-white rounded shadow"
-        onClick={() => setIsMobileMenuOpen(true)}
-        aria-label="Open sidebar menu"
-      >
-        <Icon name="Menu" size={24} />
-      </button>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:z-100 lg:w-60 lg:flex-col">
-        <div className="flex flex-col flex-1 min-h-0 bg-surface border-r border-border">
+      {/* Sidebar - always visible on all screen sizes */}
+      <aside className={`fixed inset-y-0 left-0 z-40 ${!isSidebarVisible ? 'w-0' : isSidebarCollapsed ? 'w-20' : 'w-60'} flex flex-col transition-all duration-200`}>
+        <div className="flex flex-col flex-1 min-h-0" style={{ backgroundColor: '#252569' }}>
           {/* Sidebar Header */}
-          <div className="flex items-center px-4 py-6 border-b border-border">
+          <div className="flex items-center px-4 py-6 border-b" style={{ borderColor: '#252569' }}>
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <Icon name="Layers" size={16} color="white" />
@@ -153,77 +216,43 @@ const NavigationSidebar = () => {
 
           <SidebarContent />
 
-          {/* Sidebar Footer */}
-          <div className="flex-shrink-0 p-4 border-t border-border">
-            <div className="flex items-center space-x-3 p-3 bg-surface-secondary rounded-lg">
-              <div className="w-8 h-8 bg-gradient-to-br from-success to-accent rounded-full flex items-center justify-center">
-                <Icon name="Zap" size={14} color="white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-text-primary">
-                  System Status
-                </p>
-                <p className="text-xs text-success">
-                  All systems operational
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-      {/* Mobile Sidebar Overlay */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-100 bg-black bg-opacity-50 transition-opacity duration-200" />
-      )}
+          {/* User Profile & Logout */}
+          <div className="flex-shrink-0 p-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+            {user && (
+              <div className="space-y-3">
+                {/* User Info */}
+                <div className="flex items-center space-x-3 p-3 bg-[rgba(255,255,255,0.1)] rounded-lg">
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                    <span className="text-white font-medium text-xs">
+                      {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </span>
+                  </div>
+                  {!isSidebarCollapsed && (
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-white truncate">
+                        {user.fullName}
+                      </p>
+                      <p className="text-xs text-text-muted truncate">
+                        {user.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
-      {/* Mobile Sidebar */}
-      <aside className={`
-        lg:hidden fixed inset-y-0 left-0 z-200 w-64 bg-surface border-r border-border transform transition-transform duration-200 ease-in-out mobile-sidebar
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="flex flex-col flex-1 min-h-0">
-          {/* Mobile Sidebar Header */}
-          <div className="flex items-center justify-between px-4 py-6 border-b border-border">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <Icon name="Layers" size={16} color="white" />
+                {/* Logout Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={logout}
+                  className={`w-full text-text-muted hover:text-white hover:bg-[rgba(255,255,255,0.1)] ${isSidebarCollapsed ? 'px-2' : ''}`}
+                  iconName="LogOut"
+                  iconPosition={isSidebarCollapsed ? 'center' : 'left'}
+                  title={isSidebarCollapsed ? 'Sign Out' : undefined}
+                >
+                  {!isSidebarCollapsed && 'Sign Out'}
+                </Button>
               </div>
-              <div>
-                <h2 className="text-sm font-heading font-semibold text-text-primary">
-                  Navigation
-                </h2>
-                <p className="text-xs font-caption text-text-muted">
-                  Quick access
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              iconName="X"
-              iconSize={20}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-text-secondary hover:text-text-primary"
-            />
-          </div>
-
-          <SidebarContent />
-
-          {/* Mobile Sidebar Footer */}
-          <div className="flex-shrink-0 p-4 border-t border-border">
-            <div className="flex items-center space-x-3 p-3 bg-surface-secondary rounded-lg">
-              <div className="w-8 h-8 bg-gradient-to-br from-success to-accent rounded-full flex items-center justify-center">
-                <Icon name="Zap" size={14} color="white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-text-primary">
-                  System Status
-                </p>
-                <p className="text-xs text-success">
-                  All systems operational
-                </p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </aside>

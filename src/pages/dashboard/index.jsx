@@ -7,21 +7,41 @@ import DashboardHeader from './components/DashboardHeader';
 import SummaryWidgets from './components/SummaryWidgets';
 import QuickActions from './components/QuickActions';
 import AlertSidebar from './components/AlertSidebar';
+import Icon from '../../components/AppIcon';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+
+  React.useEffect(() => {
+    const handleToggleSidebarCollapse = () => {
+      setIsSidebarCollapsed((prev) => !prev);
+    };
+    window.addEventListener('toggleSidebarCollapse', handleToggleSidebarCollapse);
+    return () => {
+      window.removeEventListener('toggleSidebarCollapse', handleToggleSidebarCollapse);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-      <AlertCenter />
+      <NavigationSidebar 
+        isSidebarOpen={isSidebarOpen} 
+        setIsSidebarOpen={setIsSidebarOpen} 
+        isSidebarCollapsed={isSidebarCollapsed}
+        isSidebarVisible={isSidebarVisible}
+      />
+      {/* <AlertCenter /> */}
       
       {/* Main Content */}
-      <main className={`${isSidebarOpen ? 'lg:ml-60' : ''} pt-16 transition-all duration-200`}>
-        <div className="flex flex-col xl:flex-row gap-8 p-6">
+      <main className={`${isSidebarCollapsed ? 'ml-20' : 'ml-60'} pt-16 transition-all duration-200`}>
+        <div className="flex flex-col xl:flex-row gap-4 px-2 py-4">
           {/* Left Content Area */}
           <div className="flex-1">
             <BreadcrumbNavigation />
+            <h1 className="text-3xl font-heading font-bold text-text-primary mb-2"> </h1>
             <DashboardHeader />
             <SummaryWidgets />
             <QuickActions />
@@ -37,7 +57,7 @@ const Dashboard = () => {
       </main>
 
       {/* Footer */}
-      <footer className={`${isSidebarOpen ? 'lg:ml-60' : ''} bg-surface border-t border-border mt-12`}>
+      <footer className={`${isSidebarCollapsed ? 'ml-20' : 'ml-60'} bg-surface border-t border-border mt-12`}>
         <div className="px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">

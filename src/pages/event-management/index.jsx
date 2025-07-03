@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -7,8 +7,9 @@ import Button from '../../components/ui/Button';
 import EventCalendar from './components/EventCalendar';
 import EventList from './components/EventList';
 import CreateEventModal from './components/CreateEventModal';
+import Icon from '../../components/AppIcon';
 
-const EventManagement = () => {
+const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -187,21 +188,26 @@ const EventManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background " >
       <Header />
-      <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+      <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
-      <main className={`${isSidebarOpen ? 'ml-60' : ''} pt-16 transition-all duration-200`}>
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} pt-16 transition-all duration-200`}>
         <div className="p-6">
           <BreadcrumbNavigation />
           
           {/* Page Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-heading font-bold text-text-primary">
-                Event Management
-              </h1>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="Calendar" size={24} color="white" />
+                </div>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                  Event Management
+                </h1>
+              </div>
               <p className="text-text-secondary mt-2">
                 Plan, coordinate, and track all club events and activities
               </p>

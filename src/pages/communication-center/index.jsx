@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -8,8 +8,9 @@ import MessageList from './components/MessageList';
 import QuickActions from './components/QuickActions';
 import SearchAndFilters from './components/SearchAndFilters';
 import MessageComposer from './components/MessageComposer';
+import Icon from '../../components/AppIcon';
 
-const CommunicationCenter = () => {
+const CommunicationCenter = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
   const [selectedCategory, setSelectedCategory] = useState('announcements');
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -192,45 +193,28 @@ const CommunicationCenter = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mt-12">
       <Header />
-      <NavigationSidebar />
+      <NavigationSidebar isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
-      <main className="main-content-offset min-h-screen">
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} transition-all duration-200`}>
         <div className="p-6">
           <BreadcrumbNavigation />
           
           {/* Page Header */}
           <div className="mb-6">
-            <div className="flex items-center space-x-3 mb-2">
+            <div className="flex items-center gap-3 mb-2">
               <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="text-white"
-                >
-                  <path
-                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Icon name="MessageSquare" size={24} color="white" />
               </div>
-              <div>
-                <h1 className="text-3xl font-heading font-bold text-text-primary">
-                  Communication Center
-                </h1>
-                <p className="text-text-secondary">
-                  Manage announcements, newsletters, and member communications
-                </p>
-              </div>
+              <h1 className="text-3xl font-heading font-bold text-text-primary">
+                Communication Center
+              </h1>
             </div>
+            <p className="text-text-secondary">
+              Manage announcements, newsletters, and member communications
+            </p>
           </div>
 
           {/* Search and Filters */}
