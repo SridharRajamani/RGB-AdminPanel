@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import Icon from '../AppIcon';
 import Button from './Button';
 import logo from "../../Images/New-RGB-Logo.png"
@@ -14,6 +15,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [recentSearches, setRecentSearches] = useState([]);
   const { user, logout, roles } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const sections = [
     { label: "Dashboard", path: "/dashboard" },
@@ -70,7 +72,13 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-1" style={{ backgroundColor: '#0C0C46' }}>
+    <header
+      className="fixed top-0 left-0 right-0 z-50 px-1 border-b"
+      style={{
+        backgroundColor: isDarkMode ? '#0C0C46' : '#ffffff',
+        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'
+      }}
+    >
       <div className="flex items-center justify-between h-full  min-h-[67px]">
         {/* Hamburger + Logo Section */}
         <div className="flex items-center space-x-3">
@@ -88,8 +96,8 @@ const Header = () => {
                 const desktopEvent = new CustomEvent('toggleSidebarCollapse');
                 window.dispatchEvent(desktopEvent);
               }}
-              className="text-white hover:text-white"
-              iconColor="white"
+              className={isDarkMode ? "text-white hover:text-white" : "text-gray-800 hover:text-gray-600"}
+              iconColor={isDarkMode ? "white" : "#374151"}
             />
           </div>
           <Link to="/dashboard" className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-150">
@@ -112,7 +120,20 @@ const Header = () => {
               <span className="text-xs text-white font-medium">3</span>
             </span>
           </div> */}
- 
+
+          {/* Theme Toggle Button */}
+          <div>
+            <Button
+              variant="ghost"
+              size="sm"
+              iconName={isDarkMode ? "Sun" : "Moon"}
+              iconSize={20}
+              className={isDarkMode ? "text-white hover:bg-white/10" : "text-gray-800 hover:bg-gray-100"}
+              onClick={toggleTheme}
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            />
+          </div>
+
           {/* Search */}
           <div className="relative">
             {!searchOpen && (
@@ -121,7 +142,7 @@ const Header = () => {
                 size="sm"
                 iconName="Search"
                 iconSize={20}
-                className="text-white hover:text-white"
+                className={isDarkMode ? "text-white hover:text-white" : "text-gray-800 hover:text-gray-600"}
                 onClick={() => {
                   setSearchOpen(true);
                   setTimeout(() => searchInputRef.current && searchInputRef.current.focus(), 100);
@@ -179,7 +200,7 @@ const Header = () => {
           <div> <AlertCenter /></div>
 
             {/* Help line, greeting, and date/time info */}
-            <div className="flex flex-col items-end justify-center ml-8 text-white text-xs font-medium space-y-0">
+            <div className={`flex flex-col items-end justify-center ml-8 text-xs font-medium space-y-0 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                         <div style={{ fontSize: "5px", fontWeight: '300', }}>
                           Help line No: +91 8956231452 / +91 9856231452
                         </div>
@@ -200,7 +221,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={toggleUserMenu}
-              className="flex items-center  text-white hover:text-white px-3 py-1"
+              className={`flex items-center px-3 py-1 ${isDarkMode ? 'text-white hover:text-white' : 'text-gray-800 hover:text-gray-600'}`}
             >
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
                 {user ? (
@@ -215,11 +236,11 @@ const Header = () => {
                 {/* <p className="text-sm font-medium text-white">Admin User</p>
                 <p className="text-xs text-white">Club President</p> */}
               </div>
-              <Icon 
-                name="ChevronDown" 
-                size={16} 
+              <Icon
+                name="ChevronDown"
+                size={16}
                 className={`transition-transform duration-150 ${userMenuOpen ? 'rotate-180' : ''}`}
-                color="white"
+                color={isDarkMode ? "white" : "#374151"}
               />
             </Button>
 

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 import Icon from '../AppIcon';
 import Button from './Button';
 
 const AlertCenter = () => {
+  const { isDarkMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState('all');
   const [alerts, setAlerts] = useState([
@@ -141,12 +143,13 @@ const AlertCenter = () => {
       <div className="hidden lg:block   z-250">
         <div className="relative">
           <Button
-            variant="primary"
+            variant="ghost"
             size="md"
             style={{ backgroundColor: 'transparent', padding: 5 }}
             iconName="Bell"
             iconSize={20}
-            onClick={toggleAlertCenter} 
+            className={isDarkMode ? 'text-white hover:text-white' : 'text-gray-800 hover:text-gray-600'}
+            onClick={toggleAlertCenter}
             data-alert-trigger
           >
             
@@ -320,7 +323,9 @@ const AlertCenter = () => {
           iconName="Bell"
           iconSize={20}
           onClick={toggleAlertCenter}
-          className="fixed bottom-6 right-6 z-250 shadow-lg rounded-full w-14 h-14"
+          className={`fixed bottom-6 right-6 z-250 shadow-lg rounded-full w-14 h-14 ${
+            isDarkMode ? 'bg-[#252569] text-white' : 'bg-blue-600 text-white'
+          }`}
           data-alert-trigger
         >
           {pendingCount > 0 && (
