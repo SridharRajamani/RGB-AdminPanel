@@ -197,7 +197,7 @@ const AlertSidebar = () => {
 
       {/* Alert Detail Modal */}
       {selectedAlert && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-300 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998] flex items-center justify-center p-4">
           <div className="bg-surface rounded-xl max-w-md w-full max-h-[80vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="p-6 border-b border-border">

@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
+import useCoolAlert from '../../../hooks/useCoolAlert';
 
 const CreateEventModal = ({ isOpen, onClose, onCreateEvent }) => {
+  const alert = useCoolAlert();
+
   const [formData, setFormData] = useState({
     title: '',
     type: 'meeting',
@@ -20,6 +23,7 @@ const CreateEventModal = ({ isOpen, onClose, onCreateEvent }) => {
 
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const eventTypes = [
     { value: 'meeting', label: 'Club Meeting', icon: 'Users' },
@@ -35,10 +39,68 @@ const CreateEventModal = ({ isOpen, onClose, onCreateEvent }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onCreateEvent(formData);
-    handleClose();
+
+    // Basic validation
+    if (!formData.title || !formData.date || !formData.time || !formData.location) {
+      alert.error(
+        '❌ Validation Error',
+        'Please fill in all required fields (Title, Date, Time, Location).',
+        { animation: 'shake' }
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Show loading alert
+      const loadingAlert = alert.info(
+        '📅 Creating Event...',
+        'Please wait while we create your event.',
+        {
+          autoClose: false,
+          animation: 'fade'
+        }
+      );
+
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      onCreateEvent(formData);
+
+      // Close loading alert
+      loadingAlert();
+
+      // Show success alert
+      alert.celebration(
+        '🎉 Event Created!',
+        `"${formData.title}" has been successfully created and scheduled!`,
+        {
+          animation: 'bounce',
+          gradient: true,
+          sound: true,
+          autoClose: true,
+          autoCloseDelay: 4000
+        }
+      );
+
+      handleClose();
+
+    } catch (error) {
+      alert.urgent(
+        '🚨 Event Creation Failed',
+        error.message || 'An error occurred while creating the event. Please try again.',
+        {
+          animation: 'shake',
+          gradient: true,
+          sound: true
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -87,7 +149,7 @@ const CreateEventModal = ({ isOpen, onClose, onCreateEvent }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-500 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998] flex items-center justify-center p-4">
       <div className="bg-surface rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-border">
@@ -369,11 +431,12 @@ const CreateEventModal = ({ isOpen, onClose, onCreateEvent }) => {
                   <Button
                     type="submit"
                     variant="primary"
-                    disabled={!isStepValid()}
-                    iconName="Plus"
+                    disabled={!isStepValid() || isSubmitting}
+                    iconName={isSubmitting ? "Loader" : "Plus"}
                     iconPosition="left"
+                    className={isSubmitting ? "animate-pulse" : ""}
                   >
-                    Create Event
+                    {isSubmitting ? "Creating..." : "Create Event"}
                   </Button>
                 )}
               </div>

@@ -4,11 +4,12 @@ module.exports = {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Primary Colors
-        'primary': '#1e3a8a', // blue-800
+        // Primary Colors (Dynamic)
+        'primary': 'var(--color-primary, #252569)',
         'primary-50': '#eff6ff', // blue-50
         'primary-100': '#dbeafe', // blue-100
         'primary-200': '#bfdbfe', // blue-200
@@ -35,8 +36,8 @@ module.exports = {
         'secondary-900': '#4c1d95', // violet-900
         'secondary-foreground': '#ffffff', // white
 
-        // Accent Colors
-        'accent': '#06b6d4', // cyan-500
+        // Accent Colors (Dynamic)
+        'accent': 'var(--color-accent, #3b82f6)',
         'accent-50': '#ecfeff', // cyan-50
         'accent-100': '#cffafe', // cyan-100
         'accent-200': '#a5f3fc', // cyan-200
@@ -103,12 +104,19 @@ module.exports = {
         // Border Colors
         'border': '#e2e8f0', // slate-200
         'border-muted': '#f1f5f9', // slate-100
+
+        // Dark Mode Colors
+        'surface-hover': 'var(--color-surface-hover, #f8fafc)',
       },
       fontFamily: {
         'heading': ['Inter', 'sans-serif'],
         'body': ['Source Sans Pro', 'sans-serif'],
         'caption': ['Roboto', 'sans-serif'],
         'mono': ['JetBrains Mono', 'monospace'],
+        'system': ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        'inter': ['Inter', 'sans-serif'],
+        'roboto': ['Roboto', 'sans-serif'],
+        'opensans': ['Open Sans', 'sans-serif'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],

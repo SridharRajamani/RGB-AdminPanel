@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -10,6 +11,7 @@ import FinancialReportsTable from './components/FinancialReportsTable';
 import FinancialSidebar from './components/FinancialSidebar';
 
 const FinancialReports = () => {
+  const { t } = useTranslation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -35,36 +37,38 @@ const FinancialReports = () => {
       />
       
       {/* Main Content */}
-      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} transition-all duration-200`}>
-        <div className="p-6 pt-24">
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-18 transition-all duration-200`}>
+        <div className="p-6">
           <BreadcrumbNavigation />
 
           {/* Page Header */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <Icon name="DollarSign" size={24} color="white" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="DollarSign" size={24} color="white" />
+                </div>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                  {t('navigation.finance', 'Financial Reports')}
+                </h1>
               </div>
-              <h1 className="text-3xl font-heading font-bold text-text-primary">
-                Financial Reports
-              </h1>
+              <p className="text-text-secondary">
+                {t('finance.overview', 'Comprehensive financial overview and detailed reporting')}
+              </p>
             </div>
-            <p className="text-text-secondary">
-              Comprehensive financial overview and detailed reporting
-            </p>
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
             {/* Left Content Area */}
-            <div className="lg:col-span-9">
+            <div className="xl:col-span-9 space-y-6">
               <FinancialSummary />
               <FinancialCharts />
               <FinancialReportsTable />
             </div>
 
             {/* Right Sidebar - Financial Stats */}
-            <div className="lg:col-span-3">
+            <div className="xl:col-span-3">
               <FinancialSidebar />
             </div>
           </div>
@@ -110,7 +114,7 @@ const FinancialReports = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-text-primary">
-                  Rotary Gulmohar Dashboard
+                  Dashboard
                 </p>
                 <p className="text-xs text-text-secondary">
                   Financial Management System
@@ -144,7 +148,7 @@ const FinancialReports = () => {
                   Contact Information
                 </h4>
                 <p className="text-xs text-text-secondary">
-                  Email: admin@rotarygulmohar.org
+                  Email: admin@dashboard.org
                 </p>
                 <p className="text-xs text-text-secondary">
                   Phone: +91 98765 43210

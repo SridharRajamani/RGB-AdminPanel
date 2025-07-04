@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -10,17 +11,20 @@ import AlertSidebar from './components/AlertSidebar';
 import Icon from '../../components/AppIcon';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
+  // Listen for sidebar state changes
   React.useEffect(() => {
-    const handleToggleSidebarCollapse = () => {
-      setIsSidebarCollapsed((prev) => !prev);
+    const handleSidebarStateChange = (event) => {
+      setIsSidebarCollapsed(event.detail.collapsed);
     };
-    window.addEventListener('toggleSidebarCollapse', handleToggleSidebarCollapse);
+
+    window.addEventListener('sidebarStateChanged', handleSidebarStateChange);
     return () => {
-      window.removeEventListener('toggleSidebarCollapse', handleToggleSidebarCollapse);
+      window.removeEventListener('sidebarStateChanged', handleSidebarStateChange);
     };
   }, []);
 
@@ -36,28 +40,48 @@ const Dashboard = () => {
       {/* <AlertCenter /> */}
       
       {/* Main Content */}
-      <main className={`${isSidebarCollapsed ? 'ml-20' : 'ml-60'} pt-16 transition-all duration-200`}>
-        <div className="flex flex-col xl:flex-row gap-4 px-2 py-4">
-          {/* Left Content Area */}
-          <div className="flex-1">
-            <BreadcrumbNavigation />
-            <h1 className="text-3xl font-heading font-bold text-text-primary mb-2"> </h1>
-            <DashboardHeader />
-            <SummaryWidgets />
-            <QuickActions />
+      <main className={`${isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-16 transition-all duration-200`}>
+        <div className="p-6">
+          <BreadcrumbNavigation />
+
+          {/* Page Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="BarChart3" size={24} color="white" />
+                </div>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                  {t('navigation.dashboard', 'Dashboard')}
+                </h1>
+              </div>
+              <p className="text-text-secondary">
+                {t('dashboard.overview', 'Overview and metrics for club activities and performance')}
+              </p>
+            </div>
           </div>
 
-          {/* Right Sidebar - Alert Center */}
-          <div className="xl:w-80 xl:flex-shrink-0">
-            <div className="sticky top-24">
-              <AlertSidebar />
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+            {/* Left Content Area */}
+            <div className="xl:col-span-9 space-y-6">
+              <DashboardHeader />
+              <SummaryWidgets />
+              <QuickActions />
+            </div>
+
+            {/* Right Sidebar - Alert Center */}
+            <div className="xl:col-span-3">
+              <div className="sticky top-24">
+                <AlertSidebar />
+              </div>
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className={`${isSidebarCollapsed ? 'ml-20' : 'ml-60'} bg-surface border-t border-border mt-12`}>
+      <footer className={`${isSidebarCollapsed ? 'ml-20' : 'ml-64'} bg-surface border-t border-border mt-12`}>
         <div className="px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
@@ -95,10 +119,10 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-text-primary">
-                  Rotary Gulmohar Dashboard
+                  Dashboard
                 </p>
                 <p className="text-xs text-text-secondary">
-                  Club Management System
+                  Management System
                 </p>
               </div>
             </div>
@@ -129,7 +153,7 @@ const Dashboard = () => {
                   Contact Information
                 </h4>
                 <p className="text-xs text-text-secondary">
-                  Email: admin@rotarygulmohar.org
+                  Email: admin@dashboard.org
                 </p>
                 <p className="text-xs text-text-secondary">
                   Phone: +91 98765 43210

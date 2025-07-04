@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useSystemSettings } from '../../context/SystemSettingsContext';
+import { useTranslation } from 'react-i18next';
 import Icon from '../AppIcon';
 import Button from './Button';
 import logo from "../../Images/New-RGB-Logo.png"
@@ -15,7 +17,9 @@ const Header = () => {
   const navigate = useNavigate();
   const [recentSearches, setRecentSearches] = useState([]);
   const { user, logout, roles } = useAuth();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode, toggleTheme, appearanceSettings } = useTheme();
+  const { getOrganizationName } = useSystemSettings();
+  const { t } = useTranslation();
 
   const sections = [
     { label: "Dashboard", path: "/dashboard" },
@@ -25,6 +29,9 @@ const Header = () => {
     { label: "Events", path: "/event-management" },
     { label: "Projects", path: "/project-management" },
     { label: "Finance", path: "/financial-reports" },
+    { label: "Donations", path: "/donations" },
+    { label: "Donor Management", path: "/donations" },
+    { label: "Fundraising Campaigns", path: "/donations" },
     { label: "Communications", path: "/communication-center" },
     { label: "General Messages", path: "/communication-center" },
   ];
@@ -75,7 +82,7 @@ const Header = () => {
     <header
       className="fixed top-0 left-0 right-0 z-50 px-1 border-b"
       style={{
-        backgroundColor: isDarkMode ? '#0C0C46' : '#ffffff',
+        backgroundColor: isDarkMode ? appearanceSettings.primaryColor : '#ffffff',
         borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'
       }}
     >
@@ -96,17 +103,21 @@ const Header = () => {
                 const desktopEvent = new CustomEvent('toggleSidebarCollapse');
                 window.dispatchEvent(desktopEvent);
               }}
-              className={isDarkMode ? "text-white hover:text-white" : "text-gray-800 hover:text-gray-600"}
-              iconColor={isDarkMode ? "white" : "#374151"}
+              className={isDarkMode ? "text-white hover:text-gray-300" : "text-primary hover:text-primary/80"}
             />
           </div>
           <Link to="/dashboard" className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-150">
             <img src={logo} alt="Rotary Gulmohar" width={240} />
+            <div className="hidden lg:block">
+              <h1 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
+                {getOrganizationName()}
+              </h1>
+            </div>
           </Link>
         </div>
 
-        {/* Desktop User Section */}
-        <div className="hidden lg:flex items-center space-x-4">
+        {/* User Section - Responsive */}
+        <div className="flex items-center space-x-2 lg:space-x-4">
           {/* Notifications */}
           {/* <div className="relative">
             <Button
@@ -114,7 +125,7 @@ const Header = () => {
               size="sm"
               iconName="Bell"
               iconSize={20}
-              className="text-white hover:text-white relative"
+              className={isDarkMode ? "text-white hover:text-gray-300" : "text-primary hover:text-primary/80"}
             />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full flex items-center justify-center">
               <span className="text-xs text-white font-medium">3</span>
@@ -127,8 +138,8 @@ const Header = () => {
               variant="ghost"
               size="sm"
               iconName={isDarkMode ? "Sun" : "Moon"}
-              iconSize={20}
-              className={isDarkMode ? "text-white hover:bg-white/10" : "text-gray-800 hover:bg-gray-100"}
+              iconSize={18}
+              className={`${isDarkMode ? "text-white hover:text-gray-300" : "text-gray-700 hover:text-gray-900"} lg:w-auto`}
               onClick={toggleTheme}
               title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             />
@@ -141,8 +152,8 @@ const Header = () => {
                 variant="ghost"
                 size="sm"
                 iconName="Search"
-                iconSize={20}
-                className={isDarkMode ? "text-white hover:text-white" : "text-gray-800 hover:text-gray-600"}
+                iconSize={18}
+                className={isDarkMode ? "text-white hover:text-gray-300" : "text-gray-700 hover:text-gray-900"}
                 onClick={() => {
                   setSearchOpen(true);
                   setTimeout(() => searchInputRef.current && searchInputRef.current.focus(), 100);
@@ -154,13 +165,13 @@ const Header = () => {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Search section..."
+                  placeholder={t('common.search', 'Search section...')}
                   value={searchValue}
                   onChange={e => setSearchValue(e.target.value)}
                   onKeyDown={e => {
                     if (e.key === 'Escape') setSearchOpen(false);
                   }}
-                  className="w-48 border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  className="w-32 lg:w-48 border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black text-sm"
                   style={{ position: 'relative', zIndex: 20 }}
                 />
                 <button
@@ -172,7 +183,7 @@ const Header = () => {
                   <Icon name="X" size={16} />
                 </button>
                 {searchValue && (
-                  <ul className="absolute left-0 mt-1 w-64 bg-white rounded shadow-lg pl-0 list-none text-left z-30 max-h-80 overflow-y-auto">
+                  <ul className="absolute left-0 mt-1 w-56 lg:w-64 bg-white rounded shadow-lg pl-0 list-none text-left z-[9997] max-h-60 lg:max-h-80 overflow-y-auto">
                     {groupedResults.every(group => group.items.length === 0) && (
                       <li className="text-gray-400 px-2 py-1">No matches</li>
                     )}
@@ -200,7 +211,7 @@ const Header = () => {
           <div> <AlertCenter /></div>
 
             {/* Help line, greeting, and date/time info */}
-            <div className={`flex flex-col items-end justify-center ml-8 text-xs font-medium space-y-0 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+            <div className={`hidden lg:flex flex-col items-end justify-center ml-8 text-xs font-medium space-y-0 ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
                         <div style={{ fontSize: "5px", fontWeight: '300', }}>
                           Help line No: +91 8956231452 / +91 9856231452
                         </div>
@@ -221,7 +232,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={toggleUserMenu}
-              className={`flex items-center px-3 py-1 ${isDarkMode ? 'text-white hover:text-white' : 'text-gray-800 hover:text-gray-600'}`}
+              className={`flex items-center px-3 py-1 ${isDarkMode ? 'text-white hover:text-gray-300' : 'text-gray-700 hover:text-gray-900'}`}
             >
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
                 {user ? (
@@ -229,7 +240,7 @@ const Header = () => {
                     {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </span>
                 ) : (
-                  <Icon name="User" size={16} color="white" />
+                  <Icon name="User" size={16} />
                 )}
               </div>
               <div className="text-left hidden xl:block">
@@ -240,13 +251,13 @@ const Header = () => {
                 name="ChevronDown"
                 size={16}
                 className={`transition-transform duration-150 ${userMenuOpen ? 'rotate-180' : ''}`}
-                color={isDarkMode ? "white" : "#374151"}
+                color={isDarkMode ? "white" : appearanceSettings.primaryColor}
               />
             </Button>
 
             {/* User Dropdown */}
             {userMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-64 bg-surface border border-border rounded-lg shadow-xl z-300 animate-fade-in">
+              <div className="absolute right-0 top-full mt-2 w-64 bg-surface border border-border rounded-lg shadow-xl z-[9997] animate-fade-in">
                 <div className="p-4 border-b border-border">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
@@ -255,7 +266,7 @@ const Header = () => {
                           {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
                         </span>
                       ) : (
-                        <Icon name="User" size={20} color="white" />
+                        <Icon name="User" size={20} />
                       )}
                     </div>
                     <div>
@@ -328,27 +339,13 @@ const Header = () => {
           
         </div>
 
-        {/* Mobile User Section */}
-        <div className="lg:hidden flex items-center space-x-2">
-          
-          {/* <span className="absolute top-2 right-12 w-2 h-2 bg-error rounded-full"></span> */}
-          
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
-            {user ? (
-              <span className="text-white font-medium text-xs">
-                {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
-              </span>
-            ) : (
-              <Icon name="User" size={16} color="white" />
-            )}
-          </div>
-        </div>
+
       </div>
 
       {/* Click outside to close user menu */}
       {userMenuOpen && (
         <div
-          className="fixed inset-0 z-100"
+          className="fixed inset-0 z-[9996]"
           onClick={() => setUserMenuOpen(false)}
         />
       )}

@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
+import { useSystemSettings } from '../../../context/SystemSettingsContext';
+import useCoolAlert from '../../../hooks/useCoolAlert';
 
-const MemberModal = ({ 
-  member, 
-  isOpen, 
-  onClose, 
+const MemberModal = ({
+  member,
+  isOpen,
+  onClose,
   mode, // 'view', 'edit', 'add'
-  onSave 
+  onSave
 }) => {
+  const { systemSettings, generateMemberId } = useSystemSettings();
+  const alert = useCoolAlert();
   const [formData, setFormData] = useState(member || {
     name: '',
     email: '',
     phone: '',
     membershipId: '',
-    membershipType: 'Regular',
+    membershipType: systemSettings.defaultMembershipType || 'Regular',
     status: 'active',
     designation: '',
     committee: '',
@@ -30,6 +34,20 @@ const MemberModal = ({
   });
 
   const [activeTab, setActiveTab] = useState('basic');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Auto-generate member ID for new members
+  useEffect(() => {
+    if (mode === 'add' && systemSettings.autoGenerateMemberId && !formData.membershipId) {
+      // In a real app, you'd get the next sequence number from your backend
+      const nextSequence = Math.floor(Math.random() * 1000) + 1; // Temporary random number
+      const generatedId = generateMemberId(nextSequence);
+      setFormData(prev => ({
+        ...prev,
+        membershipId: generatedId
+      }));
+    }
+  }, [mode, systemSettings.autoGenerateMemberId, generateMemberId, formData.membershipId]);
 
   if (!isOpen) return null;
 
@@ -40,9 +58,68 @@ const MemberModal = ({
     }));
   };
 
-  const handleSave = () => {
-    onSave(formData);
-    onClose();
+  const handleSave = async () => {
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.membershipId) {
+      alert.error(
+        '❌ Validation Error',
+        'Please fill in all required fields (Name, Email, Membership ID).',
+        { animation: 'shake' }
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Show loading alert
+      const loadingAlert = alert.info(
+        '👤 Saving Member...',
+        `Please wait while we ${mode === 'add' ? 'create' : 'update'} the member information.`,
+        {
+          autoClose: false,
+          animation: 'fade'
+        }
+      );
+
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      onSave(formData);
+
+      // Close loading alert
+      loadingAlert();
+
+      // Show success alert
+      alert.celebration(
+        mode === 'add' ? '🎉 Member Added!' : '✅ Member Updated!',
+        mode === 'add'
+          ? `${formData.name} has been successfully added to the system!`
+          : `${formData.name}'s information has been updated successfully!`,
+        {
+          animation: 'bounce',
+          gradient: true,
+          sound: true,
+          autoClose: true,
+          autoCloseDelay: 3000
+        }
+      );
+
+      onClose();
+
+    } catch (error) {
+      alert.urgent(
+        '🚨 Save Failed',
+        error.message || 'An error occurred while saving member information. Please try again.',
+        {
+          animation: 'shake',
+          gradient: true,
+          sound: true
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isViewMode = mode === 'view';
@@ -70,7 +147,7 @@ const MemberModal = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-500 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998] flex items-center justify-center p-4">
       <div className="bg-surface rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
@@ -306,13 +383,16 @@ const MemberModal = ({
                     <div>
                       <label className="block text-sm font-medium text-text-secondary mb-2">
                         Membership ID *
+                        {systemSettings.autoGenerateMemberId && mode === 'add' && (
+                          <span className="text-xs text-primary ml-2">(Auto-generated)</span>
+                        )}
                       </label>
                       <Input
                         type="text"
                         value={formData.membershipId}
                         onChange={(e) => handleInputChange('membershipId', e.target.value)}
-                        placeholder="Enter membership ID"
-                        disabled={isViewMode}
+                        placeholder={systemSettings.autoGenerateMemberId ? "Auto-generated ID" : "Enter membership ID"}
+                        disabled={isViewMode || (systemSettings.autoGenerateMemberId && mode === 'add')}
                         required
                       />
                     </div>
@@ -438,18 +518,24 @@ const MemberModal = ({
             <Button
               variant="ghost"
               onClick={onClose}
+              disabled={isSubmitting}
               className="text-text-secondary hover:text-text-primary"
             >
               Cancel
             </Button>
-            
+
             <Button
               variant="primary"
               onClick={handleSave}
-              iconName="Save"
+              iconName={isSubmitting ? "Loader" : "Save"}
               iconPosition="left"
+              disabled={isSubmitting}
+              className={isSubmitting ? "animate-pulse" : ""}
             >
-              {isAddMode ? 'Add Member' : 'Save Changes'}
+              {isSubmitting
+                ? "Saving..."
+                : (isAddMode ? 'Add Member' : 'Save Changes')
+              }
             </Button>
           </div>
         )}

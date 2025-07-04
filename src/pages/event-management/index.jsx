@@ -193,12 +193,12 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
       <NavigationSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
-      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} pt-16 transition-all duration-200`}>
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-10 transition-all duration-200`}>
         <div className="p-6">
           <BreadcrumbNavigation />
-          
+
           {/* Page Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
@@ -208,7 +208,7 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
                   Event Management
                 </h1>
               </div>
-              <p className="text-text-secondary mt-2">
+              <p className="text-text-secondary">
                 Plan, coordinate, and track all club events and activities
               </p>
             </div>

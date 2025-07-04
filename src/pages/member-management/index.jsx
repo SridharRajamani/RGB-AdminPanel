@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -13,7 +14,21 @@ import MemberFilters from './components/MemberFilters';
 import MembershipSummary from './components/MembershipSummary';
 import MemberModal from './components/MemberModal';
 
-const MemberManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
+const MemberManagement = ({ isSidebarCollapsed: propSidebarCollapsed = false, isSidebarVisible = true }) => {
+  const { t } = useTranslation();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(propSidebarCollapsed);
+
+  // Listen for sidebar state changes
+  React.useEffect(() => {
+    const handleSidebarStateChange = (event) => {
+      setIsSidebarCollapsed(event.detail.collapsed);
+    };
+
+    window.addEventListener('sidebarStateChanged', handleSidebarStateChange);
+    return () => {
+      window.removeEventListener('sidebarStateChanged', handleSidebarStateChange);
+    };
+  }, []);
   // Mock data for members
   const [members] = useState([
     {
@@ -316,7 +331,7 @@ const MemberManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true 
       <NavigationSidebar isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
-      <main className={`${isSidebarCollapsed ? 'ml-20' : 'ml-60'} transition-all duration-200`}>
+      <main className={`${isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-0 transition-all duration-200`}>
         <div className="p-6">
           <BreadcrumbNavigation />
           
@@ -346,16 +361,16 @@ const MemberManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true 
                 onClick={handleExportMembers}
                 className="text-text-secondary hover:text-primary border-border hover:border-primary"
               >
-                Export Data
+                {t('buttons.export', 'Export Data')}
               </Button>
-              
+
               <Button
                 variant="primary"
                 iconName="UserPlus"
                 iconPosition="left"
                 onClick={handleAddMember}
               >
-                Add New Member
+                {t('buttons.addNew', 'Add New Member')}
               </Button>
             </div>
           </div>

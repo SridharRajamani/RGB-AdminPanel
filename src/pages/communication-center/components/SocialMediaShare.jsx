@@ -753,7 +753,7 @@ const SocialMediaShare = ({ content, subject, attachments = [], onShare }) => {
 
       {/* WhatsApp Sharing Modal */}
       {showWhatsAppModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-1000 flex items-center justify-center p-1 sm:p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998] flex items-center justify-center p-1 sm:p-4">
           <div className="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-xs sm:max-w-lg max-h-[98vh] sm:max-h-[95vh] overflow-y-auto m-1 sm:m-0">
             {/* Header */}
             <div className="flex items-center justify-between p-2 sm:p-4 border-b border-gray-200 bg-green-50">

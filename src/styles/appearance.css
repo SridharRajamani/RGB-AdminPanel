@@ -1,0 +1,397 @@
+/* Appearance Settings CSS */
+
+/* CSS Custom Properties for Dynamic Theming */
+:root {
+  --color-primary: #252569;
+  --color-accent: #3b82f6;
+  --color-surface-hover: #f8fafc;
+  --color-primary-rgb: 37, 37, 105;
+  --color-accent-rgb: 59, 130, 246;
+}
+
+.dark {
+  --color-surface-hover: #1e293b;
+}
+
+/* Apply dynamic colors to common elements */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+/* Button styles with dynamic colors */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.9);
+  border-color: rgba(var(--color-primary-rgb), 0.9);
+}
+
+.btn-accent {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.btn-accent:hover {
+  background-color: rgba(var(--color-accent-rgb), 0.9);
+  border-color: rgba(var(--color-accent-rgb), 0.9);
+}
+
+/* Focus states with dynamic colors */
+.focus-primary:focus {
+  outline-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
+}
+
+/* Ring colors for form elements */
+.ring-primary {
+  --tw-ring-color: rgba(var(--color-primary-rgb), 0.2);
+}
+
+.ring-accent {
+  --tw-ring-color: rgba(var(--color-accent-rgb), 0.2);
+}
+
+/* Dynamic colors for specific elements */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+/* Button component overrides */
+button.bg-primary,
+.btn-primary,
+[data-variant="primary"] {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+button.bg-primary:hover,
+.btn-primary:hover,
+[data-variant="primary"]:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.9);
+  border-color: rgba(var(--color-primary-rgb), 0.9);
+}
+
+/* Icon colors */
+.text-primary svg,
+[class*="text-primary"] svg {
+  color: var(--color-primary);
+}
+
+.text-white svg,
+[class*="text-white"] svg {
+  color: white;
+}
+
+/* Navigation and UI element colors */
+.nav-item.active,
+.nav-item:hover {
+  color: var(--color-primary);
+}
+
+.nav-item.active svg,
+.nav-item:hover svg {
+  color: var(--color-primary);
+}
+
+/* Form element focus states */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* Toggle switches */
+input:checked + .toggle-slider,
+.peer:checked ~ .peer-checked\:bg-primary {
+  background-color: var(--color-primary);
+}
+
+/* Font Family Classes */
+.font-system {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-opensans {
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Density Classes */
+.density-compact {
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 0.75rem;
+  --spacing-lg: 1rem;
+  --spacing-xl: 1.25rem;
+}
+
+.density-comfortable {
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+}
+
+.density-spacious {
+  --spacing-xs: 0.75rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 2.5rem;
+}
+
+/* Apply density spacing */
+.density-compact .p-4 {
+  padding: var(--spacing-md);
+}
+
+.density-compact .p-6 {
+  padding: var(--spacing-lg);
+}
+
+.density-compact .space-y-4 > * + * {
+  margin-top: var(--spacing-md);
+}
+
+.density-comfortable .p-4 {
+  padding: var(--spacing-md);
+}
+
+.density-comfortable .p-6 {
+  padding: var(--spacing-lg);
+}
+
+.density-comfortable .space-y-4 > * + * {
+  margin-top: var(--spacing-md);
+}
+
+.density-spacious .p-4 {
+  padding: var(--spacing-md);
+}
+
+.density-spacious .p-6 {
+  padding: var(--spacing-lg);
+}
+
+.density-spacious .space-y-4 > * + * {
+  margin-top: var(--spacing-md);
+}
+
+/* Animation Control */
+.no-animations * {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-border: #000000;
+  --color-background: #ffffff;
+}
+
+.dark.high-contrast {
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-border: #ffffff;
+  --color-background: #000000;
+}
+
+/* Focus Indicators */
+.enhanced-focus *:focus {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .respect-motion-preference * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-surface-hover);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+/* Dark mode scrollbar */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+/* Toggle Switch Styles */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--color-primary);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+/* Color Picker Styles */
+input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+/* Preview Mode Indicator */
+.preview-mode-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #f59e0b;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1000;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsive Design Helpers */
+@media (max-width: 768px) {
+  .density-compact {
+    --spacing-xs: 0.125rem;
+    --spacing-sm: 0.25rem;
+    --spacing-md: 0.5rem;
+    --spacing-lg: 0.75rem;
+    --spacing-xl: 1rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+  }
+}

@@ -1,11 +1,14 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Icon from '../../../components/AppIcon';
 
 const SummaryWidgets = () => {
+  const { t } = useTranslation();
+
   const summaryData = [
     {
       id: 1,
-      title: 'Members',
+      title: t('dashboard.members', 'Members'),
       value: '155',
       icon: 'Users',
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
@@ -15,7 +18,7 @@ const SummaryWidgets = () => {
     },
     {
       id: 2,
-      title: 'Donors',
+      title: t('dashboard.donors', 'Donors'),
       value: '26',
       icon: 'Heart',
       color: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
@@ -25,7 +28,7 @@ const SummaryWidgets = () => {
     },
     {
       id: 3,
-      title: 'Funds Available',
+      title: t('dashboard.fundsAvailable', 'Funds Available'),
       value: '₹15,632',
       icon: 'DollarSign',
       color: 'bg-gradient-to-br from-violet-500 to-violet-600',
@@ -35,7 +38,7 @@ const SummaryWidgets = () => {
     },
     {
       id: 4,
-      title: 'Active Projects',
+      title: t('dashboard.activeProjects', 'Active Projects'),
       value: '13',
       icon: 'FolderOpen',
       color: 'bg-gradient-to-br from-amber-500 to-amber-600',
@@ -45,7 +48,7 @@ const SummaryWidgets = () => {
     },
     {
       id: 5,
-      title: 'Upcoming Events',
+      title: t('dashboard.upcomingEvents', 'Upcoming Events'),
       value: '7',
       icon: 'Calendar',
       color: 'bg-gradient-to-br from-cyan-500 to-cyan-600',

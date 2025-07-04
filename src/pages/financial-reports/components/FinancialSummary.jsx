@@ -1,7 +1,10 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
+import { useSystemSettings } from '../../../context/SystemSettingsContext';
 
 const FinancialSummary = () => {
+  const { formatCurrency } = useSystemSettings();
+
   const financialData = {
     totalIncome: 1250000,
     totalExpenses: 875000,
@@ -11,15 +14,6 @@ const FinancialSummary = () => {
     monthlyExpenses: 87500,
     pendingPayments: 45000,
     upcomingBudget: 200000
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
   };
 
   const getPercentageChange = (current, previous) => {

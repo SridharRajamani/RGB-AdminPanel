@@ -2,57 +2,97 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import Icon from '../AppIcon';
 import Button from './Button';
 
-const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
+const NavigationSidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
   const { user, logout, hasPermission } = useAuth();
-  const { isDarkMode } = useTheme();
+  const { isDarkMode, appearanceSettings } = useTheme();
+  const { t } = useTranslation();
+
+  // Toggle sidebar function
+  const toggleSidebar = () => {
+    setSidebarCollapsed(prev => {
+      const newState = !prev;
+      // Dispatch event to update parent components
+      const event = new CustomEvent('sidebarStateChanged', {
+        detail: { collapsed: newState }
+      });
+      window.dispatchEvent(event);
+      return newState;
+    });
+  };
+
+  // Debug render
+  console.log('🚀 NavigationSidebar RENDER - sidebarCollapsed:', sidebarCollapsed);
 
   const navigationItems = [
     {
-      label: 'Dashboard',
+      label: t('navigation.dashboard', 'Dashboard'),
       path: '/dashboard',
       icon: 'LayoutDashboard',
-      description: 'Overview and metrics',
+      description: t('dashboard.overview', 'Overview and metrics'),
       permission: 'dashboard'
     },
     {
-      label: 'Members',
+      label: t('navigation.members', 'Members'),
       path: '/member-management',
       icon: 'Users',
-      description: 'Member management',
+      description: t('members.title', 'Member management'),
       permission: 'member_management'
     },
     {
-      label: 'Events',
+      label: t('navigation.events', 'Events'),
       path: '/event-management',
       icon: 'Calendar',
       description: 'Event planning',
       permission: 'event_management'
     },
     {
-      label: 'Projects',
+      label: t('navigation.projects', 'Projects'),
       path: '/project-management',
       icon: 'FolderOpen',
       description: 'Project tracking',
       permission: 'project_management'
     },
     {
-      label: 'Finance',
+      label: t('navigation.finance', 'Finance'),
       path: '/financial-reports',
       icon: 'DollarSign',
-      description: 'Financial reports',
+      description: t('finance.title', 'Financial reports'),
       permission: 'financial_reports'
     },
     {
-      label: 'Communications',
+      label: t('navigation.donations', 'Donations'),
+      path: '/donations',
+      icon: 'Heart',
+      description: t('donations.title', 'Donation management'),
+      permission: 'donations'
+    },
+    {
+      label: t('navigation.communications', 'Communications'),
       path: '/communication-center',
       icon: 'MessageSquare',
       description: 'Announcements & newsletters',
       permission: 'communication_center'
+    },
+    {
+      label: t('navigation.settings', 'Settings'),
+      path: '/settings',
+      icon: 'Settings',
+      description: t('settings.title', 'System configuration'),
+      permission: 'settings'
+    },
+    {
+      label: 'Cool Alerts',
+      path: '/cool-alert-demo',
+      icon: 'Zap',
+      description: 'Amazing alert system demo',
+      permission: 'dashboard'
     }
   ];
 
@@ -62,7 +102,7 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
       path: '/admin/users',
       icon: 'UserCog',
       description: 'Manage admin users',
-      permission: 'all'
+      permission: 'user_management'
     }
   ];
 
@@ -75,6 +115,18 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
     window.addEventListener('toggleMobileMenu', handleToggleMobileMenu);
     return () => {
       window.removeEventListener('toggleMobileMenu', handleToggleMobileMenu);
+    };
+  }, []);
+
+  // Handle sidebar collapse toggle from header
+  useEffect(() => {
+    const handleToggleSidebarCollapse = () => {
+      toggleSidebar();
+    };
+
+    window.addEventListener('toggleSidebarCollapse', handleToggleSidebarCollapse);
+    return () => {
+      window.removeEventListener('toggleSidebarCollapse', handleToggleSidebarCollapse);
     };
   }, []);
 
@@ -102,7 +154,7 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
   };
 
   const SidebarContent = () => (
-    <nav className={`flex-1 ${isSidebarCollapsed ? 'px-2' : 'px-4'} py-6 space-y-2`}>
+    <nav className={`flex-1 ${sidebarCollapsed ? 'px-2' : 'px-4'} py-6 space-y-2 overflow-auto custom-scrollbar`}>
       {/* Main Navigation */}
       {navigationItems.filter(item => hasPermission(item.permission)).map((item) => {
         const isActive = isActiveRoute(item.path);
@@ -112,47 +164,59 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
             key={item.path}
             to={item.path}
             className={`
-              group flex items-center ${isSidebarCollapsed ? 'justify-center' : ''} px-3 py-3 text-sm font-medium rounded-lg transition-all duration-150
+              group flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'px-3'} py-3 text-sm font-medium rounded-lg transition-all duration-150
               ${isActive
                 ? isDarkMode
-                  ? 'bg-white text-[#252569] shadow-md'
-                  : 'bg-blue-100 text-blue-800 shadow-md'
+                  ? 'bg-white shadow-md'
+                  : 'shadow-md'
                 : isDarkMode
-                  ? 'text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.1)]'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                  ? 'text-white hover:text-gray-200 hover:bg-[rgba(255,255,255,0.1)]'
+                  : 'hover:bg-gray-100'
               }
             `}
-            title={isSidebarCollapsed ? item.label : undefined}
+            style={isActive && !isDarkMode ? {
+              backgroundColor: appearanceSettings.primaryColor,
+              color: 'white'
+            } : isActive && isDarkMode ? {
+              color: appearanceSettings.primaryColor
+            } : !isDarkMode ? {
+              color: 'black'
+            } : {}}
+            title={sidebarCollapsed ? item.label : undefined}
+
           >
             <Icon
               name={item.icon}
               size={20}
-              className={`mr-3 flex-shrink-0 ${
+              className={`${!sidebarCollapsed ? 'mr-3' : ''} flex-shrink-0 ${
                 isActive
-                  ? isDarkMode ? 'text-[#252569]' : 'text-blue-800'
+                  ? ''
                   : isDarkMode
-                    ? 'text-gray-400 group-hover:text-white'
-                    : 'text-gray-500 group-hover:text-gray-800'
+                    ? 'text-white group-hover:text-gray-200'
+                    : 'group-hover:text-gray-800'
               }`}
+              style={isActive ? { color: isDarkMode ? appearanceSettings.primaryColor : 'white' } : !isDarkMode ? { color: appearanceSettings.primaryColor } : {}}
             />
-            {!isSidebarCollapsed && (
+            {!sidebarCollapsed && (
               <div className="flex-1 min-w-0">
-                <p className={`font-medium ${
+                <p className={`text-base font-medium ${
                   isActive
-                    ? isDarkMode ? 'text-[#252569]' : 'text-blue-800'
+                    ? ''
                     : isDarkMode
-                      ? 'text-gray-300 group-hover:text-white'
-                      : 'text-gray-700 group-hover:text-gray-800'
-                }`}>
+                      ? 'text-white group-hover:text-gray-200'
+                      : 'group-hover:text-gray-800'
+                }`}
+                style={isActive ? { color: isDarkMode ? appearanceSettings.primaryColor : 'white' } : !isDarkMode ? { color: 'rgb(30 41 59)' } : {}}>
                   {item.label}
                 </p>
                 <p className={`text-xs mt-0.5 ${
                   isActive
-                    ? isDarkMode ? 'text-[#252569]' : 'text-blue-700'
+                    ? ''
                     : isDarkMode
-                      ? 'text-gray-400 group-hover:text-white'
-                      : 'text-gray-500 group-hover:text-gray-700'
-                }`}>
+                      ? 'text-white group-hover:text-gray-200'
+                      : 'group-hover:text-gray-700'
+                }`}
+                style={isActive ? { color: isDarkMode ? appearanceSettings.primaryColor : 'white' } : !isDarkMode ? { color: 'rgb(148 163 184)' } : {}}>
                   {item.description}
                 </p>
               </div>
@@ -160,7 +224,7 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
             {isActive && (
               <div
                 className="w-2 h-2 rounded-full ml-2 flex-shrink-0"
-                style={{ backgroundColor: isDarkMode ? '#252569' : '#3b82f6' }}
+                style={{ backgroundColor: isDarkMode ? appearanceSettings.primaryColor : 'white' }}
               />
             )}
           </Link>
@@ -170,15 +234,15 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
       {/* Admin Section */}
       {adminItems.some(item => hasPermission(item.permission)) && (
         <>
-          <div className="pt-4 pb-2">
-            {!isSidebarCollapsed && (
+          {!sidebarCollapsed && (
+            <div className="pt-4 pb-2">
               <p className={`px-3 text-xs font-semibold uppercase tracking-wider ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                isDarkMode ? 'text-white' : 'text-gray-500'
               }`}>
                 Administration
               </p>
-            )}
-          </div>
+            </div>
+          )}
           {adminItems.filter(item => hasPermission(item.permission)).map((item) => {
             const isActive = isActiveRoute(item.path);
 
@@ -187,55 +251,64 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
                 key={item.path}
                 to={item.path}
                 className={`
-                  group flex items-center ${isSidebarCollapsed ? 'justify-center' : ''} px-3 py-3 text-sm font-medium rounded-lg transition-all duration-150
+                  group flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-3' : 'px-3 py-3'} text-sm font-medium rounded-lg transition-all duration-150
                   ${isActive
                     ? isDarkMode
-                      ? 'bg-white text-[#252569] shadow-md'
-                      : 'bg-blue-100 text-blue-800 shadow-md'
+                      ? 'bg-white shadow-md'
+                      : 'shadow-md'
                     : isDarkMode
-                      ? 'text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.1)]'
+                      ? 'text-white hover:text-gray-200 hover:bg-[rgba(255,255,255,0.1)]'
                       : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                   }
                 `}
-                title={isSidebarCollapsed ? item.label : undefined}
+                style={isActive && !isDarkMode ? {
+                  backgroundColor: appearanceSettings.primaryColor,
+                  color: 'white'
+                } : isActive && isDarkMode ? {
+                  color: appearanceSettings.primaryColor
+                } : {}}
+                title={sidebarCollapsed ? item.label : undefined}
               >
                 <Icon
                   name={item.icon}
                   size={20}
-                  className={`mr-3 flex-shrink-0 ${
+                  className={`${sidebarCollapsed ? '' : 'mr-3'} flex-shrink-0 ${
                     isActive
-                      ? isDarkMode ? 'text-[#252569]' : 'text-blue-800'
+                      ? ''
                       : isDarkMode
-                        ? 'text-gray-400 group-hover:text-white'
+                        ? 'text-white group-hover:text-gray-200'
                         : 'text-gray-500 group-hover:text-gray-800'
                   }`}
+                  style={isActive ? { color: isDarkMode ? appearanceSettings.primaryColor : 'white' } : {}}
                 />
-                {!isSidebarCollapsed && (
+                {!sidebarCollapsed && (
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium ${
+                    <p className={`text-base font-medium ${
                       isActive
-                        ? isDarkMode ? 'text-[#252569]' : 'text-blue-800'
+                        ? ''
                         : isDarkMode
-                          ? 'text-gray-300 group-hover:text-white'
+                          ? 'text-white group-hover:text-gray-200'
                           : 'text-gray-700 group-hover:text-gray-800'
-                    }`}>
+                    }`}
+                    style={isActive ? { color: isDarkMode ? appearanceSettings.primaryColor : 'white' } : !isDarkMode ? { color: 'rgb(30 41 59)' } : {}}>
                       {item.label}
                     </p>
                     <p className={`text-xs mt-0.5 ${
                       isActive
-                        ? isDarkMode ? 'text-[#252569]' : 'text-blue-700'
+                        ? ''
                         : isDarkMode
-                          ? 'text-gray-400 group-hover:text-white'
+                          ? 'text-white group-hover:text-gray-200'
                           : 'text-gray-500 group-hover:text-gray-700'
-                    }`}>
+                    }`}
+                    style={isActive ? { color: isDarkMode ? appearanceSettings.primaryColor : 'white' } : !isDarkMode ? { color: 'rgb(148 163 184)' } : {}}>
                       {item.description}
                     </p>
                   </div>
                 )}
-                {isActive && (
+                {isActive && !sidebarCollapsed && (
                   <div
                     className="w-2 h-2 rounded-full ml-2 flex-shrink-0"
-                    style={{ backgroundColor: isDarkMode ? '#252569' : '#3b82f6' }}
+                    style={{ backgroundColor: isDarkMode ? appearanceSettings.primaryColor : 'white' }}
                   />
                 )}
               </Link>
@@ -248,47 +321,57 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
 
   return (
     <>
+
+
       {/* Sidebar - always visible on all screen sizes */}
-      <aside className={`fixed inset-y-0 left-0 z-40 ${!isSidebarVisible ? 'w-0' : isSidebarCollapsed ? 'w-20' : 'w-60'} flex flex-col transition-all duration-200`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 ${sidebarCollapsed ? 'w-20' : 'w-64'} flex flex-col transition-all duration-300 ${isDarkMode ? 'dark' : ''}`}>
         <div
           className="flex flex-col flex-1 min-h-0 border-r"
           style={{
-            backgroundColor: isDarkMode ? '#252569' : '#ffffff',
+            backgroundColor: isDarkMode ? appearanceSettings.primaryColor : '#ffffff',
             borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'
           }}
         >
           {/* Sidebar Header */}
           <div
-            className="flex items-center px-4 py-6 border-b"
-            style={{ borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0' }}
+            className={`flex items-center justify-between ${sidebarCollapsed ? 'px-2' : 'px-4'} py-6 border-b`}
+            style={{
+              borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0',
+              minHeight: '100px',
+              overflow: 'visible'
+            }}
           >
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <Icon name="Layers" size={16} color="white" />
               </div>
-              <div>
-                <h2 className={`text-sm font-heading font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                  Navigation
-                </h2>
-                <p className={`text-xs font-caption ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Quick access
-                </p>
-              </div>
+              {!sidebarCollapsed && (
+                <div>
+                  <h2 className={`text-sm font-heading font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                    Navigation
+                  </h2>
+                  <p className={`text-xs font-caption ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
+                    Quick access
+                  </p>
+                </div>
+              )}
             </div>
+
+
           </div>
 
           <SidebarContent />
 
           {/* User Profile & Logout */}
           <div
-            className="flex-shrink-0 p-4 border-t"
+            className={`flex-shrink-0 ${sidebarCollapsed ? 'p-2' : 'p-4'} border-t`}
             style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0' }}
           >
             {user && (
               <div className="space-y-3">
                 {/* User Info */}
                 <div
-                  className="flex items-center space-x-3 p-3 rounded-lg"
+                  className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} p-3 rounded-lg`}
                   style={{ backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#f8fafc' }}
                 >
                   <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
@@ -296,7 +379,7 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
                       {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
                     </span>
                   </div>
-                  {!isSidebarCollapsed && (
+                  {!sidebarCollapsed && (
                     <div className="flex-1 min-w-0">
                       <p className={`text-xs font-medium truncate ${
                         isDarkMode ? 'text-white' : 'text-gray-800'
@@ -304,7 +387,7 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
                         {user.fullName}
                       </p>
                       <p className={`text-xs truncate ${
-                        isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                        isDarkMode ? 'text-white' : 'text-gray-600'
                       }`}>
                         {user.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                       </p>
@@ -313,21 +396,34 @@ const NavigationSidebar = ({ isSidebarCollapsed = false, isSidebarVisible = true
                 </div>
 
                 {/* Logout Button */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={logout}
-                  className={`w-full ${isSidebarCollapsed ? 'px-2' : ''} ${
-                    isDarkMode
-                      ? 'text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.1)]'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                  }`}
-                  iconName="LogOut"
-                  iconPosition={isSidebarCollapsed ? 'center' : 'left'}
-                  title={isSidebarCollapsed ? 'Sign Out' : undefined}
-                >
-                  {!isSidebarCollapsed && 'Sign Out'}
-                </Button>
+                {!sidebarCollapsed ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={logout}
+                    className={`w-full ${
+                      isDarkMode
+                        ? 'text-white hover:text-gray-200 hover:bg-[rgba(255,255,255,0.1)]'
+                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                    }`}
+                    iconName="LogOut"
+                    iconPosition="left"
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <button
+                    onClick={logout}
+                    className={`w-full p-2 rounded-lg transition-colors ${
+                      isDarkMode
+                        ? 'text-white hover:text-gray-200 hover:bg-[rgba(255,255,255,0.1)]'
+                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                    }`}
+                    title="Sign Out"
+                  >
+                    <Icon name="LogOut" size={16} />
+                  </button>
+                )}
               </div>
             )}
           </div>

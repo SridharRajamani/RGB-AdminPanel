@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Icon from '../../../components/AppIcon';
 
 const DashboardHeader = () => {
+  const { t } = useTranslation();
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString('en-IN', {
     weekday: 'long',
@@ -27,10 +29,10 @@ const DashboardHeader = () => {
             </div>
             <div>
               <h1 className="text-2xl font-heading font-bold">
-                Welcome back, Admin User
+                {t('dashboard.welcomeBack', 'Welcome back, Admin User')}
               </h1>
               <p className="text-primary-100 text-sm">
-                Club President • Rotary Gulmohar
+                {t('dashboard.userRole', 'Club President • Rotary Gulmohar')}
               </p>
             </div>
           </div>

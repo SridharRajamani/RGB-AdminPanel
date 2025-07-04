@@ -1,92 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { useNotifications } from '../../context/NotificationContext';
 import Icon from '../AppIcon';
 import Button from './Button';
 
 const AlertCenter = () => {
   const { isDarkMode } = useTheme();
+  const {
+    notifications,
+    getUnreadCount,
+    markAsRead,
+    markAllAsRead,
+    removeNotification,
+    getNotificationsByType
+  } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState('all');
-  const [alerts, setAlerts] = useState([
+  // Combine context notifications with sample alerts for demo
+  const sampleAlerts = [
     {
-      id: 1,
+      id: 'sample-1',
       type: 'approval',
       title: 'Budget Approval Required',
       message: 'Annual charity event budget of ₹2,50,000 needs approval',
       timestamp: '2 hours ago',
       priority: 'high',
       category: 'finance',
-      actionRequired: true
+      actionRequired: true,
+      read: false
     },
     {
-      id: 2,
+      id: 'sample-2',
       type: 'notification',
       title: 'New Member Application',
       message: 'Rajesh Kumar has submitted membership application',
       timestamp: '4 hours ago',
       priority: 'medium',
       category: 'members',
-      actionRequired: true
-    },
-    {
-      id: 3,
-      type: 'reminder',
-      title: 'Event Reminder',
-      message: 'Weekly meeting scheduled for tomorrow at 7:00 PM',
-      timestamp: '1 day ago',
-      priority: 'low',
-      category: 'events',
-      actionRequired: false
-    },
-    {
-      id: 4,
-      type: 'approval',
-      title: 'Project Proposal',
-      message: 'Community health camp project proposal awaiting review',
-      timestamp: '2 days ago',
-      priority: 'high',
-      category: 'projects',
-      actionRequired: true
-    },
-    {
-      id: 5,
-      type: 'notification',
-      title: 'Payment Received',
-      message: 'Membership fee payment received from 5 members',
-      timestamp: '3 days ago',
-      priority: 'low',
-      category: 'finance',
-      actionRequired: false
+      actionRequired: true,
+      read: false
     }
-  ]);
-  const pendingCount = alerts.filter(alert => alert.actionRequired).length;
+  ];
+
+  // Combine notifications from context with sample alerts
+  const allAlerts = [...notifications, ...sampleAlerts];
+  const pendingCount = allAlerts.filter(alert => alert.actionRequired && !alert.read).length;
+  const unreadCount = getUnreadCount();
 
   const toggleAlertCenter = () => {
     setIsOpen(!isOpen);
   };
 
   const handleApprove = (alertId) => {
-    setAlerts(alerts.map(alert => 
-      alert.id === alertId 
-        ? { ...alert, actionRequired: false, status: 'approved' }
-        : alert
-    ));
+    // Mark as read and handle approval
+    markAsRead(alertId);
+    console.log(`Approved alert: ${alertId}`);
   };
 
   const handleReject = (alertId) => {
-    setAlerts(alerts.map(alert => 
-      alert.id === alertId 
-        ? { ...alert, actionRequired: false, status: 'rejected' }
-        : alert
-    ));
+    // Mark as read and handle rejection
+    markAsRead(alertId);
+    console.log(`Rejected alert: ${alertId}`);
   };
 
   const handleMarkAsRead = (alertId) => {
-    setAlerts(alerts.map(alert => 
-      alert.id === alertId 
-        ? { ...alert, read: true }
-        : alert
-    ));
+    markAsRead(alertId);
+  };
+
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
+  };
+
+  const handleRemoveAlert = (alertId) => {
+    removeNotification(alertId);
   };
 
   const getAlertIcon = (type) => {
@@ -115,12 +101,13 @@ const AlertCenter = () => {
     }
   };
 
-  const filteredAlerts = alerts.filter(alert => {
+  const filteredAlerts = allAlerts.filter(alert => {
     if (filter === 'all') return true;
-    if (filter === 'pending') return alert.actionRequired;
+    if (filter === 'pending') return alert.actionRequired && !alert.read;
+    if (filter === 'unread') return !alert.read;
     if (filter === 'approved') return alert.status === 'approved';
     if (filter === 'rejected') return alert.status === 'rejected';
-    return alert.category === filter;
+    return alert.category === filter || alert.type === filter;
   });
 
   // Close alert center when clicking outside
@@ -140,7 +127,7 @@ const AlertCenter = () => {
   return (
     <>
       {/* Desktop Alert Center */}
-      <div className="hidden lg:block   z-250">
+      <div className="hidden lg:block   z-[9997]">
         <div className="relative">
           <Button
             variant="ghost"
@@ -153,9 +140,9 @@ const AlertCenter = () => {
             data-alert-trigger
           >
             
-            {pendingCount > 0 && (
+            {(pendingCount + unreadCount) > 0 && (
               <span className="absolute -top-2 -right-2 w-6 h-6 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center">
-                {pendingCount}
+                {pendingCount + unreadCount}
               </span>
             )}
           </Button>
@@ -168,20 +155,35 @@ const AlertCenter = () => {
                   <h3 className="text-lg font-heading font-semibold text-text-primary">
                     Alert Center
                   </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    iconName="X"
-                    iconSize={16}
-                    onClick={() => setIsOpen(false)}
-                    className="text-text-secondary hover:text-text-primary"
-                  />
+                  <div className="flex items-center space-x-2">
+                    {(unreadCount > 0) && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        iconName="CheckCircle"
+                        iconSize={14}
+                        onClick={handleMarkAllAsRead}
+                        className="text-text-secondary hover:text-text-primary text-xs"
+                      >
+                        Mark All Read
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      iconName="X"
+                      iconSize={16}
+                      onClick={() => setIsOpen(false)}
+                      className="text-text-secondary hover:text-text-primary"
+                    />
+                  </div>
                 </div>
                 
                 {/* Filter Tabs */}
                 <div className="flex space-x-1 mt-3">
                   {[
                     { key: 'all', label: 'All' },
+                    { key: 'unread', label: 'Unread' },
                     { key: 'pending', label: 'Pending' },
                     { key: 'finance', label: 'Finance' },
                     { key: 'members', label: 'Members' }
@@ -199,6 +201,11 @@ const AlertCenter = () => {
                       {tab.key === 'pending' && pendingCount > 0 && (
                         <span className="ml-1 px-1.5 py-0.5 bg-error text-white text-xs rounded-full">
                           {pendingCount}
+                        </span>
+                      )}
+                      {tab.key === 'unread' && unreadCount > 0 && (
+                        <span className="ml-1 px-1.5 py-0.5 bg-primary text-white text-xs rounded-full">
+                          {unreadCount}
                         </span>
                       )}
                     </button>
@@ -323,7 +330,7 @@ const AlertCenter = () => {
           iconName="Bell"
           iconSize={20}
           onClick={toggleAlertCenter}
-          className={`fixed bottom-6 right-6 z-250 shadow-lg rounded-full w-14 h-14 ${
+          className={`fixed bottom-6 right-6 z-[9997] shadow-lg rounded-full w-14 h-14 ${
             isDarkMode ? 'bg-[#252569] text-white' : 'bg-blue-600 text-white'
           }`}
           data-alert-trigger
@@ -337,8 +344,8 @@ const AlertCenter = () => {
 
         {isOpen && (
           <>
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-300" />
-            <div className="fixed bottom-0 left-0 right-0 bg-surface rounded-t-xl z-400 max-h-[80vh] alert-center animate-slide-in">
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-[9997]" />
+            <div className="fixed bottom-0 left-0 right-0 bg-surface rounded-t-xl z-[9998] max-h-[80vh] alert-center animate-slide-in">
               {/* Mobile Header */}
               <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between">

@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
+import useCoolAlert from '../../../hooks/useCoolAlert';
 import SocialMediaShare from './SocialMediaShare';
 
 const MessageComposer = ({ isOpen, onClose, messageType, selectedRecipients }) => {
+  const alert = useCoolAlert();
+
   const [formData, setFormData] = useState({
     subject: '',
     content: '',
@@ -16,6 +19,7 @@ const MessageComposer = ({ isOpen, onClose, messageType, selectedRecipients }) =
 
   const [activeTab, setActiveTab] = useState('compose');
   const [dragOver, setDragOver] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -99,19 +103,176 @@ const MessageComposer = ({ isOpen, onClose, messageType, selectedRecipients }) =
     return 'File';
   };
 
-  const handleSend = () => {
-    console.log('Sending message:', formData);
-    onClose();
+  const handleSend = async () => {
+    // Basic validation
+    if (!formData.subject || !formData.content) {
+      alert.error(
+        '❌ Validation Error',
+        'Please fill in both subject and message content.',
+        { animation: 'shake' }
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Show loading alert
+      const loadingAlert = alert.info(
+        '📧 Sending Message...',
+        'Please wait while we send your message.',
+        {
+          autoClose: false,
+          animation: 'fade'
+        }
+      );
+
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      console.log('Sending message:', formData);
+
+      // Close loading alert
+      loadingAlert();
+
+      // Show success alert
+      alert.celebration(
+        '🎉 Message Sent!',
+        `Your message "${formData.subject}" has been sent successfully!`,
+        {
+          animation: 'bounce',
+          gradient: true,
+          sound: true,
+          autoClose: true,
+          autoCloseDelay: 3000
+        }
+      );
+
+      onClose();
+
+    } catch (error) {
+      alert.urgent(
+        '🚨 Send Failed',
+        error.message || 'An error occurred while sending the message. Please try again.',
+        {
+          animation: 'shake',
+          gradient: true,
+          sound: true
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSchedule = () => {
-    console.log('Scheduling message:', formData);
-    onClose();
+  const handleSchedule = async () => {
+    // Basic validation
+    if (!formData.subject || !formData.content || !formData.scheduleDate) {
+      alert.error(
+        '❌ Validation Error',
+        'Please fill in subject, content, and schedule date.',
+        { animation: 'shake' }
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Show loading alert
+      const loadingAlert = alert.info(
+        '⏰ Scheduling Message...',
+        'Please wait while we schedule your message.',
+        {
+          autoClose: false,
+          animation: 'fade'
+        }
+      );
+
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      console.log('Scheduling message:', formData);
+
+      // Close loading alert
+      loadingAlert();
+
+      // Show success alert
+      alert.success(
+        '📅 Message Scheduled!',
+        `Your message has been scheduled for ${new Date(formData.scheduleDate).toLocaleDateString()}.`,
+        {
+          animation: 'slide',
+          sound: true,
+          autoClose: true,
+          autoCloseDelay: 3000
+        }
+      );
+
+      onClose();
+
+    } catch (error) {
+      alert.urgent(
+        '🚨 Schedule Failed',
+        error.message || 'An error occurred while scheduling the message. Please try again.',
+        {
+          animation: 'shake',
+          gradient: true,
+          sound: true
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSaveDraft = () => {
-    console.log('Saving draft:', formData);
-    onClose();
+  const handleSaveDraft = async () => {
+    setIsSubmitting(true);
+
+    try {
+      // Show loading alert
+      const loadingAlert = alert.info(
+        '💾 Saving Draft...',
+        'Please wait while we save your draft.',
+        {
+          autoClose: false,
+          animation: 'fade'
+        }
+      );
+
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      console.log('Saving draft:', formData);
+
+      // Close loading alert
+      loadingAlert();
+
+      // Show success alert
+      alert.notification(
+        '✅ Draft Saved!',
+        'Your message has been saved as a draft.',
+        {
+          animation: 'slide',
+          autoClose: true,
+          autoCloseDelay: 2000
+        }
+      );
+
+      onClose();
+
+    } catch (error) {
+      alert.error(
+        '🚨 Save Failed',
+        error.message || 'An error occurred while saving the draft. Please try again.',
+        {
+          animation: 'shake',
+          sound: true
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getComposerTitle = () => {
@@ -511,13 +672,14 @@ const MessageComposer = ({ isOpen, onClose, messageType, selectedRecipients }) =
             <Button
               variant="ghost"
               size="sm"
-              iconName="Save"
+              iconName={isSubmitting ? "Loader" : "Save"}
               iconPosition="left"
               onClick={handleSaveDraft}
-              className="text-xs sm:text-sm"
+              disabled={isSubmitting}
+              className={`text-xs sm:text-sm ${isSubmitting ? "animate-pulse" : ""}`}
             >
-              <span className="hidden sm:inline">Save Draft</span>
-              <span className="sm:hidden">Save</span>
+              <span className="hidden sm:inline">{isSubmitting ? "Saving..." : "Save Draft"}</span>
+              <span className="sm:hidden">{isSubmitting ? "Saving..." : "Save"}</span>
             </Button>
           </div>
 
@@ -526,6 +688,7 @@ const MessageComposer = ({ isOpen, onClose, messageType, selectedRecipients }) =
               variant="outline"
               onClick={onClose}
               size="sm"
+              disabled={isSubmitting}
               className="flex-1 sm:flex-none text-xs sm:text-sm"
             >
               Cancel
@@ -534,26 +697,28 @@ const MessageComposer = ({ isOpen, onClose, messageType, selectedRecipients }) =
             {formData.scheduleDate ? (
               <Button
                 variant="secondary"
-                iconName="Clock"
+                iconName={isSubmitting ? "Loader" : "Clock"}
                 iconPosition="left"
                 onClick={handleSchedule}
                 size="sm"
-                className="flex-1 sm:flex-none text-xs sm:text-sm"
+                disabled={isSubmitting}
+                className={`flex-1 sm:flex-none text-xs sm:text-sm ${isSubmitting ? "animate-pulse" : ""}`}
               >
-                <span className="hidden sm:inline">Schedule Send</span>
-                <span className="sm:hidden">Schedule</span>
+                <span className="hidden sm:inline">{isSubmitting ? "Scheduling..." : "Schedule Send"}</span>
+                <span className="sm:hidden">{isSubmitting ? "Scheduling..." : "Schedule"}</span>
               </Button>
             ) : (
               <Button
                 variant="primary"
-                iconName="Send"
+                iconName={isSubmitting ? "Loader" : "Send"}
                 iconPosition="left"
                 onClick={handleSend}
                 size="sm"
-                className="flex-1 sm:flex-none text-xs sm:text-sm"
+                disabled={isSubmitting}
+                className={`flex-1 sm:flex-none text-xs sm:text-sm ${isSubmitting ? "animate-pulse" : ""}`}
               >
-                <span className="hidden sm:inline">Send Now</span>
-                <span className="sm:hidden">Send</span>
+                <span className="hidden sm:inline">{isSubmitting ? "Sending..." : "Send Now"}</span>
+                <span className="sm:hidden">{isSubmitting ? "Sending..." : "Send"}</span>
               </Button>
             )}
           </div>

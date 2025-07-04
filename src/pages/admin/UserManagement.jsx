@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { PermissionGate } from '../../components/auth/RouteGuard';
 import Header from '../../components/ui/Header';
 import NavigationSidebar from '../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../components/ui/BreadcrumbNavigation';
@@ -124,7 +125,7 @@ const UserManagement = () => {
                 Manage admin users, roles, and permissions
               </p>
             </div>
-            {hasPermission('all') && (
+            <PermissionGate requiredPermissions={['user_management']}>
               <Button
                 variant="primary"
                 iconName="UserPlus"
@@ -133,7 +134,7 @@ const UserManagement = () => {
               >
                 Add New User
               </Button>
-            )}
+            </PermissionGate>
           </div>
 
           {/* Stats Cards */}
@@ -241,9 +242,9 @@ const UserManagement = () => {
                     <th className="text-left py-4 px-6 font-medium text-text-secondary">Status</th>
                     <th className="text-left py-4 px-6 font-medium text-text-secondary">Last Login</th>
                     <th className="text-left py-4 px-6 font-medium text-text-secondary">Created</th>
-                    {hasPermission('all') && (
+                    <PermissionGate requiredPermissions={['user_management']}>
                       <th className="text-right py-4 px-6 font-medium text-text-secondary">Actions</th>
-                    )}
+                    </PermissionGate>
                   </tr>
                 </thead>
                 <tbody>
@@ -279,7 +280,7 @@ const UserManagement = () => {
                       <td className="py-4 px-6 text-sm text-text-secondary">
                         {formatDate(userData.createdAt)}
                       </td>
-                      {hasPermission('all') && (
+                      <PermissionGate requiredPermissions={['user_management']}>
                         <td className="py-4 px-6">
                           <div className="flex items-center justify-end space-x-2">
                             <Button
@@ -299,7 +300,7 @@ const UserManagement = () => {
                             )}
                           </div>
                         </td>
-                      )}
+                      </PermissionGate>
                     </tr>
                   ))}
                 </tbody>

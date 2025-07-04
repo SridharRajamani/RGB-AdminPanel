@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       status: 'active',
       lastLogin: '2024-01-14T15:45:00Z',
       createdAt: '2023-06-15T00:00:00Z',
-      permissions: ['financial_reports', 'dashboard', 'member_management']
+      permissions: ['financial_reports', 'dashboard', 'member_management', 'settings']
     },
     {
       id: 3,
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       status: 'active',
       lastLogin: '2024-01-13T09:20:00Z',
       createdAt: '2023-08-20T00:00:00Z',
-      permissions: ['event_management', 'dashboard', 'communication_center']
+      permissions: ['event_management', 'dashboard', 'communication_center', 'settings']
     },
     {
       id: 4,
@@ -63,32 +63,112 @@ export const AuthProvider = ({ children }) => {
     }
   ]);
 
-  // Role definitions
+  // All available permissions in the system
+  const allPermissions = {
+    // Core System
+    'dashboard': 'Access to main dashboard',
+    'settings': 'Access to system settings',
+    'user_management': 'Manage admin users and permissions',
+
+    // Member Management
+    'member_management': 'View and manage members',
+    'member_create': 'Create new members',
+    'member_edit': 'Edit member information',
+    'member_delete': 'Delete members',
+    'member_export': 'Export member data',
+
+    // Event Management
+    'event_management': 'View and manage events',
+    'event_create': 'Create new events',
+    'event_edit': 'Edit event information',
+    'event_delete': 'Delete events',
+    'event_publish': 'Publish/unpublish events',
+
+    // Project Management
+    'project_management': 'View and manage projects',
+    'project_create': 'Create new projects',
+    'project_edit': 'Edit project information',
+    'project_delete': 'Delete projects',
+    'project_budget': 'Manage project budgets',
+
+    // Financial Management
+    'financial_reports': 'View financial reports',
+    'donations_view': 'View donations',
+    'donations_manage': 'Manage donations',
+    'budget_view': 'View budgets',
+    'budget_manage': 'Manage budgets',
+    'financial_export': 'Export financial data',
+
+    // Communication
+    'communication_center': 'Access communication center',
+    'newsletter_create': 'Create newsletters',
+    'newsletter_send': 'Send newsletters',
+    'social_media': 'Manage social media posts',
+
+    // Admin Functions
+    'all': 'Full system access (Super Admin only)'
+  };
+
+  // Role definitions with enhanced permissions
   const roles = {
     super_admin: {
       name: 'Super Administrator',
-      description: 'Full system access',
-      permissions: ['all']
+      description: 'Full system access with all permissions',
+      permissions: ['all'],
+      color: '#dc2626', // Red
+      icon: 'Crown'
     },
     finance_admin: {
       name: 'Finance Administrator',
-      description: 'Financial management access',
-      permissions: ['financial_reports', 'dashboard', 'member_management']
+      description: 'Complete financial management access',
+      permissions: [
+        'dashboard', 'settings', 'financial_reports', 'donations_view',
+        'donations_manage', 'budget_view', 'budget_manage', 'financial_export',
+        'member_management', 'member_export'
+      ],
+      color: '#059669', // Green
+      icon: 'DollarSign'
     },
     event_admin: {
       name: 'Event Administrator',
-      description: 'Event management access',
-      permissions: ['event_management', 'dashboard', 'communication_center']
+      description: 'Complete event and communication management',
+      permissions: [
+        'dashboard', 'settings', 'event_management', 'event_create',
+        'event_edit', 'event_delete', 'event_publish', 'communication_center',
+        'newsletter_create', 'newsletter_send', 'social_media'
+      ],
+      color: '#7c3aed', // Purple
+      icon: 'Calendar'
     },
     project_admin: {
       name: 'Project Administrator',
-      description: 'Project management access',
-      permissions: ['project_management', 'dashboard']
+      description: 'Complete project management access',
+      permissions: [
+        'dashboard', 'project_management', 'project_create', 'project_edit',
+        'project_delete', 'project_budget', 'budget_view'
+      ],
+      color: '#ea580c', // Orange
+      icon: 'FolderOpen'
     },
     member_admin: {
       name: 'Member Administrator',
-      description: 'Member management access',
-      permissions: ['member_management', 'dashboard']
+      description: 'Complete member management access',
+      permissions: [
+        'dashboard', 'member_management', 'member_create', 'member_edit',
+        'member_delete', 'member_export', 'communication_center'
+      ],
+      color: '#0284c7', // Blue
+      icon: 'Users'
+    },
+    viewer: {
+      name: 'Viewer',
+      description: 'Read-only access to basic information',
+      permissions: [
+        'dashboard', 'member_management', 'event_management',
+        'project_management', 'financial_reports'
+      ],
+      color: '#6b7280', // Gray
+      icon: 'Eye'
     }
   };
 
@@ -135,8 +215,13 @@ export const AuthProvider = ({ children }) => {
       }
 
       // In a real app, you'd verify the password hash
-      // For demo purposes, we'll accept any password for existing users
-      if (password.length < 3) {
+      // For demo purposes, we'll check temporary password or accept any password for existing users
+      if (foundUser.tempPassword) {
+        // Check if using temporary password
+        if (password !== foundUser.tempPassword && password.length < 3) {
+          throw new Error('Invalid username or password');
+        }
+      } else if (password.length < 3) {
         throw new Error('Invalid username or password');
       }
 
@@ -180,8 +265,88 @@ export const AuthProvider = ({ children }) => {
   // Check if user has permission
   const hasPermission = (permission) => {
     if (!user) return false;
+    if (user.status !== 'active') return false;
     if (user.permissions.includes('all')) return true;
     return user.permissions.includes(permission);
+  };
+
+  // Check if user has any of the provided permissions
+  const hasAnyPermission = (permissions) => {
+    if (!user) return false;
+    if (user.status !== 'active') return false;
+    if (user.permissions.includes('all')) return true;
+    return permissions.some(permission => user.permissions.includes(permission));
+  };
+
+  // Check if user has all of the provided permissions
+  const hasAllPermissions = (permissions) => {
+    if (!user) return false;
+    if (user.status !== 'active') return false;
+    if (user.permissions.includes('all')) return true;
+    return permissions.every(permission => user.permissions.includes(permission));
+  };
+
+  // Check if user can access a specific page/route
+  const canAccessRoute = (routePath) => {
+    if (!user) return false;
+    if (user.status !== 'active') return false;
+    if (user.permissions.includes('all')) return true;
+
+    // Route to permission mapping
+    const routePermissions = {
+      '/dashboard': ['dashboard'],
+      '/member-management': ['member_management'],
+      '/event-management': ['event_management'],
+      '/project-management': ['project_management'],
+      '/donations': ['donations_view', 'financial_reports'],
+      '/financial-reports': ['financial_reports'],
+      '/communication-center': ['communication_center'],
+      '/admin/user-management': ['user_management', 'all'],
+      '/settings': ['settings']
+    };
+
+    const requiredPermissions = routePermissions[routePath];
+    if (!requiredPermissions) return true; // Allow access to routes without specific permissions
+
+    return hasAnyPermission(requiredPermissions);
+  };
+
+  // Get user's role information
+  const getUserRole = () => {
+    if (!user) return null;
+    return roles[user.role] || null;
+  };
+
+  // Check if user can perform specific actions
+  const canPerformAction = (action, context = {}) => {
+    if (!user) return false;
+    if (user.status !== 'active') return false;
+    if (user.permissions.includes('all')) return true;
+
+    // Action-based permission checks
+    const actionPermissions = {
+      'create_member': ['member_create'],
+      'edit_member': ['member_edit'],
+      'delete_member': ['member_delete'],
+      'export_members': ['member_export'],
+      'create_event': ['event_create'],
+      'edit_event': ['event_edit'],
+      'delete_event': ['event_delete'],
+      'publish_event': ['event_publish'],
+      'create_project': ['project_create'],
+      'edit_project': ['project_edit'],
+      'delete_project': ['project_delete'],
+      'manage_budget': ['project_budget', 'budget_manage'],
+      'send_newsletter': ['newsletter_send'],
+      'manage_users': ['user_management', 'all'],
+      'view_financial_reports': ['financial_reports'],
+      'manage_donations': ['donations_manage']
+    };
+
+    const requiredPermissions = actionPermissions[action];
+    if (!requiredPermissions) return false;
+
+    return hasAnyPermission(requiredPermissions);
   };
 
   // Create new admin user
@@ -190,9 +355,12 @@ export const AuthProvider = ({ children }) => {
       id: Math.max(...adminUsers.map(u => u.id)) + 1,
       ...userData,
       createdAt: new Date().toISOString(),
-      lastLogin: null
+      lastLogin: null,
+      // Store temporary password and require password change
+      tempPassword: userData.tempPassword,
+      passwordChangeRequired: userData.passwordChangeRequired || false
     };
-    
+
     setAdminUsers(prev => [...prev, newUser]);
     return newUser;
   };
@@ -230,9 +398,15 @@ export const AuthProvider = ({ children }) => {
     error,
     adminUsers,
     roles,
+    allPermissions,
     login,
     logout,
     hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
+    canAccessRoute,
+    canPerformAction,
+    getUserRole,
     createAdminUser,
     updateAdminUser,
     deleteAdminUser,

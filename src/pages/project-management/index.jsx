@@ -41,111 +41,114 @@ const ProjectManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true
       <AlertCenter />
       
       {/* Main Content */}
-      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} pt-16 transition-all duration-200`}>
-        <div className="flex flex-col xl:flex-row gap-8 p-6">
-          {/* Left Content Area */}
-          <div className="flex-1">
-            <BreadcrumbNavigation />
-            
-            {/* Page Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                    <Icon name="FolderOpen" size={24} color="white" />
-                  </div>
-                  <h1 className="text-3xl font-heading font-bold text-text-primary">
-                    Projects & Initiatives
-                  </h1>
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-10 transition-all duration-200`}>
+        <div className="p-6">
+          <BreadcrumbNavigation />
+
+          {/* Page Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="FolderOpen" size={24} color="white" />
                 </div>
-                <p className="text-text-secondary mt-1">
-                  Track and oversee club projects from conception to completion
-                </p>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                  Projects & Initiatives
+                </h1>
               </div>
-              
-              <div className="flex items-center gap-3">
-                {/* View Toggle */}
-                <div className="flex rounded-lg border border-border bg-surface">
-                  <Button
-                    variant={currentView === 'board' ? 'primary' : 'ghost'}
-                    size="sm"
-                    iconName="Layout"
-                    onClick={() => handleViewChange('board')}
-                    className="rounded-l-lg rounded-r-none border-r border-border"
-                  >
-                    Board
-                  </Button>
-                  <Button
-                    variant={currentView === 'list' ? 'primary' : 'ghost'}
-                    size="sm"
-                    iconName="List"
-                    onClick={() => handleViewChange('list')}
-                    className="rounded-none border-r border-border"
-                  >
-                    List
-                  </Button>
-                  <Button
-                    variant={currentView === 'calendar' ? 'primary' : 'ghost'}
-                    size="sm"
-                    iconName="Calendar"
-                    onClick={() => handleViewChange('calendar')}
-                    className="rounded-r-lg rounded-l-none"
-                  >
-                    Calendar
-                  </Button>
-                </div>
-                
-                <Button
-                  variant="primary"
-                  size="md"
-                  iconName="Plus"
-                  onClick={handleCreateProject}
-                >
-                  New Project
-                </Button>
-              </div>
+              <p className="text-text-secondary">
+                Track and oversee club projects from conception to completion
+              </p>
             </div>
 
-            {/* Filters */}
-            <ProjectFilters
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
+            <div className="flex items-center gap-3">
+              {/* View Toggle */}
+              <div className="flex rounded-lg border border-border bg-surface">
+                <Button
+                  variant={currentView === 'board' ? 'primary' : 'ghost'}
+                  size="sm"
+                  iconName="Layout"
+                  onClick={() => handleViewChange('board')}
+                  className="rounded-l-lg rounded-r-none border-r border-border"
+                >
+                  Board
+                </Button>
+                <Button
+                  variant={currentView === 'list' ? 'primary' : 'ghost'}
+                  size="sm"
+                  iconName="List"
+                  onClick={() => handleViewChange('list')}
+                  className="rounded-none border-r border-border"
+                >
+                  List
+                </Button>
+                <Button
+                  variant={currentView === 'calendar' ? 'primary' : 'ghost'}
+                  size="sm"
+                  iconName="Calendar"
+                  onClick={() => handleViewChange('calendar')}
+                  className="rounded-r-lg rounded-l-none"
+                >
+                  Calendar
+                </Button>
+              </div>
 
-            {/* Content based on current view */}
-            <div className="mt-6">
-              {currentView === 'board' && (
-                <ProjectKanbanBoard
-                  filters={filters}
-                />
-              )}
-              
-              {currentView === 'list' && (
-                <ProjectListView
-                  filters={filters}
-                />
-              )}
-              
-              {currentView === 'calendar' && (
-                <div className="bg-surface rounded-lg border border-border p-8 text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-text-primary mb-2">Calendar View</h3>
-                  <p className="text-text-secondary">
-                    Calendar view implementation coming soon. Track project timelines and deadlines visually.
-                  </p>
-                </div>
-              )}
+              <Button
+                variant="primary"
+                size="md"
+                iconName="Plus"
+                onClick={handleCreateProject}
+              >
+                New Project
+              </Button>
             </div>
           </div>
 
-          {/* Right Sidebar - Project Statistics */}
-          <div className="xl:w-80 xl:flex-shrink-0">
-            <div className="sticky top-24">
-              <ProjectStatsSidebar />
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+            {/* Left Content Area */}
+            <div className="xl:col-span-9 space-y-6">
+              {/* Filters */}
+              <ProjectFilters
+                filters={filters}
+                onFilterChange={handleFilterChange}
+              />
+
+              {/* Content based on current view */}
+              <div>
+                {currentView === 'board' && (
+                  <ProjectKanbanBoard
+                    filters={filters}
+                  />
+                )}
+
+                {currentView === 'list' && (
+                  <ProjectListView
+                    filters={filters}
+                  />
+                )}
+
+                {currentView === 'calendar' && (
+                  <div className="bg-surface rounded-lg border border-border p-8 text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-text-primary mb-2">Calendar View</h3>
+                    <p className="text-text-secondary">
+                      Calendar view implementation coming soon. Track project timelines and deadlines visually.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Sidebar - Project Statistics */}
+            <div className="xl:col-span-3">
+              <div className="sticky top-24">
+                <ProjectStatsSidebar />
+              </div>
             </div>
           </div>
         </div>
@@ -198,10 +201,10 @@ const ProjectManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true
               </div>
               <div>
                 <p className="text-sm font-medium text-text-primary">
-                  Rotary Gulmohar Project Management
+                  Dashboard Project Management
                 </p>
                 <p className="text-xs text-text-secondary">
-                  Club Project Tracking System
+                  Project Tracking System
                 </p>
               </div>
             </div>
@@ -219,7 +222,7 @@ const ProjectManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true
                 </a>
               </div>
               <div className="text-xs text-text-muted">
-                © {new Date().getFullYear()} Rotary Gulmohar. All rights reserved.
+                © {new Date().getFullYear()} Dashboard. All rights reserved.
               </div>
             </div>
           </div>

@@ -56,7 +56,7 @@ const CommunicationCenter = ({ isSidebarCollapsed = false, isSidebarVisible = tr
       sender: 'Club President',
       subject: 'Annual Charity Gala - Save the Date',
       preview: `Dear Members, We are excited to announce our Annual Charity Gala scheduled for March 15th, 2024. This year's theme is "Building Bridges, Changing Lives" and we expect to raise significant funds for our community projects.`,
-      content: `Dear Members,\n\nWe are excited to announce our Annual Charity Gala scheduled for March 15th, 2024. This year's theme is "Building Bridges, Changing Lives" and we expect to raise significant funds for our community projects.\n\nThe event will be held at the Grand Ballroom of Hotel Taj Palace from 7:00 PM onwards. We request all members to mark their calendars and confirm their attendance by February 28th.\n\nTicket prices:\n- Members: ₹2,500 per person\n- Non-members: ₹3,500 per person\n- Corporate tables: ₹25,000 (seats 10)\n\nPlease contact the organizing committee for bookings and sponsorship opportunities.\n\nBest regards,\nRotary Club Gulmohar`,
+      content: `Dear Members,\n\nWe are excited to announce our Annual Charity Gala scheduled for March 15th, 2024. This year's theme is "Building Bridges, Changing Lives" and we expect to raise significant funds for our community projects.\n\nThe event will be held at the Grand Ballroom of Hotel Taj Palace from 7:00 PM onwards. We request all members to mark their calendars and confirm their attendance by February 28th.\n\nTicket prices:\n- Members: ₹2,500 per person\n- Non-members: ₹3,500 per person\n- Corporate tables: ₹25,000 (seats 10)\n\nPlease contact the organizing committee for bookings and sponsorship opportunities.\n\nBest regards,\nDashboard Team`,
       date: '2024-01-15T10:30:00',
       read: false,
       priority: 'high',
@@ -198,23 +198,25 @@ const CommunicationCenter = ({ isSidebarCollapsed = false, isSidebarVisible = tr
       <NavigationSidebar isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
       <AlertCenter />
       
-      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-60'} transition-all duration-200`}>
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-0 transition-all duration-200`}>
         <div className="p-6">
           <BreadcrumbNavigation />
-          
+
           {/* Page Header */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <Icon name="MessageSquare" size={24} color="white" />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="MessageSquare" size={24} color="white" />
+                </div>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                  Communication Center
+                </h1>
               </div>
-              <h1 className="text-3xl font-heading font-bold text-text-primary">
-                Communication Center
-              </h1>
+              <p className="text-text-secondary">
+                Manage announcements, newsletters, and member communications
+              </p>
             </div>
-            <p className="text-text-secondary">
-              Manage announcements, newsletters, and member communications
-            </p>
           </div>
 
           {/* Search and Filters */}
@@ -229,9 +231,9 @@ const CommunicationCenter = ({ isSidebarCollapsed = false, isSidebarVisible = tr
           />
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
             {/* Left Sidebar - Communication Categories */}
-            <div className="lg:col-span-3">
+            <div className="xl:col-span-3">
               <CommunicationSidebar
                 selectedCategory={selectedCategory}
                 onCategorySelect={handleCategorySelect}
@@ -240,7 +242,7 @@ const CommunicationCenter = ({ isSidebarCollapsed = false, isSidebarVisible = tr
             </div>
 
             {/* Center Panel - Message List */}
-            <div className="lg:col-span-6">
+            <div className="xl:col-span-6">
               <MessageList
                 messages={filteredMessages}
                 selectedCategory={selectedCategory}
@@ -251,7 +253,7 @@ const CommunicationCenter = ({ isSidebarCollapsed = false, isSidebarVisible = tr
             </div>
 
             {/* Right Panel - Quick Actions */}
-            <div className="lg:col-span-3">
+            <div className="xl:col-span-3">
               <QuickActions
                 onActionSelect={handleActionSelect}
                 recipientGroups={recipientGroups}

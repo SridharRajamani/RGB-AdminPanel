@@ -1,22 +1,25 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Icon from '../AppIcon';
 
 const BreadcrumbNavigation = () => {
+  const { t } = useTranslation();
   const location = useLocation();
 
   const routeMap = {
-    '/dashboard': { label: 'Dashboard', icon: 'LayoutDashboard' },
-    '/member-management': { label: 'Member Management', icon: 'Users' },
-    '/event-management': { label: 'Event Management', icon: 'Calendar' },
-    '/financial-reports': { label: 'Financial Reports', icon: 'DollarSign' },
-    '/project-management': { label: 'Project Management', icon: 'FolderOpen' },
-    '/communication-center': { label: 'Communication Center', icon: 'MessageSquare' }
+    '/dashboard': { label: t('navigation.dashboard', 'Dashboard'), icon: 'LayoutDashboard' },
+    '/member-management': { label: t('navigation.members', 'Member Management'), icon: 'Users' },
+    '/event-management': { label: t('navigation.events', 'Event Management'), icon: 'Calendar' },
+    '/financial-reports': { label: t('navigation.finance', 'Financial Reports'), icon: 'DollarSign' },
+    '/project-management': { label: t('navigation.projects', 'Project Management'), icon: 'FolderOpen' },
+    '/donations': { label: t('navigation.donations', 'Donations'), icon: 'Heart' },
+    '/communication-center': { label: t('navigation.communications', 'Communication Center'), icon: 'MessageSquare' }
   };
 
   const generateBreadcrumbs = () => {
     const pathSegments = location.pathname.split('/').filter(segment => segment);
-    const breadcrumbs = [{ label: 'Dashboard', path: '/dashboard', icon: 'LayoutDashboard' }];
+    const breadcrumbs = [{ label: t('navigation.dashboard', 'Dashboard'), path: '/dashboard', icon: 'LayoutDashboard' }];
 
     if (location.pathname !== '/dashboard') {
       const currentRoute = routeMap[location.pathname];

@@ -86,8 +86,8 @@ const HelpSupport = () => {
 
   const contactInfo = {
     phone: '+91 8956231452 / +91 9856231452',
-    email: 'admin@rotarygulmohar.org',
-    address: 'Rotary Club of Gulmohar Bangalore',
+    email: 'admin@dashboard.org',
+    address: 'Dashboard Support Center',
     hours: 'Monday - Friday: 9:00 AM - 6:00 PM'
   };
 
@@ -134,7 +134,7 @@ const HelpSupport = () => {
                 Help & Support
               </h1>
               <p className="text-text-secondary">
-                Get help with using the Rotary Gulmohar Bangalore dashboard
+                Get help with using the dashboard
               </p>
             </div>
           </div>
