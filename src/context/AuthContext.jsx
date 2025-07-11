@@ -13,6 +13,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Sample admin users data (in a real app, this would come from an API)
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
       status: 'active',
       lastLogin: '2024-01-14T15:45:00Z',
       createdAt: '2023-06-15T00:00:00Z',
-      permissions: ['financial_reports', 'dashboard', 'member_management', 'settings']
+      permissions: ['financial_reports', 'dashboard', 'member_management', 'settings', 'content_management']
     },
     {
       id: 3,
@@ -48,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       status: 'active',
       lastLogin: '2024-01-13T09:20:00Z',
       createdAt: '2023-08-20T00:00:00Z',
-      permissions: ['event_management', 'dashboard', 'communication_center', 'settings']
+      permissions: ['event_management', 'dashboard', 'communication_center', 'settings', 'content_management']
     },
     {
       id: 4,
@@ -60,6 +61,19 @@ export const AuthProvider = ({ children }) => {
       lastLogin: '2023-12-20T14:10:00Z',
       createdAt: '2023-03-10T00:00:00Z',
       permissions: ['project_management', 'dashboard']
+    },
+    {
+      id: 5,
+      username: 'test_user',
+      email: 'test@rotarygulmohar.org',
+      fullName: 'Test User',
+      role: 'member_admin',
+      status: 'active',
+      lastLogin: null,
+      createdAt: '2024-01-16T00:00:00Z',
+      permissions: ['member_management', 'dashboard', 'settings'],
+      tempPassword: 'Test123@Pass',
+      passwordChangeRequired: true
     }
   ]);
 
@@ -104,6 +118,9 @@ export const AuthProvider = ({ children }) => {
     'newsletter_create': 'Create newsletters',
     'newsletter_send': 'Send newsletters',
     'social_media': 'Manage social media posts',
+
+    // Content Management
+    'content_management': 'Manage website content and media',
 
     // Admin Functions
     'all': 'Full system access (Super Admin only)'
@@ -255,11 +272,20 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout function
-  const logout = () => {
-    localStorage.removeItem('rotary_auth_user');
-    localStorage.removeItem('rotary_auth_token');
-    setUser(null);
-    setError(null);
+  const logout = async () => {
+    setLogoutLoading(true);
+
+    try {
+      // Simulate logout API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      localStorage.removeItem('rotary_auth_user');
+      localStorage.removeItem('rotary_auth_token');
+      setUser(null);
+      setError(null);
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   // Check if user has permission
@@ -301,6 +327,7 @@ export const AuthProvider = ({ children }) => {
       '/donations': ['donations_view', 'financial_reports'],
       '/financial-reports': ['financial_reports'],
       '/communication-center': ['communication_center'],
+      '/landing-content-form': ['content_management'],
       '/admin/user-management': ['user_management', 'all'],
       '/settings': ['settings']
     };
@@ -395,6 +422,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    logoutLoading,
     error,
     adminUsers,
     roles,

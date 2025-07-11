@@ -53,6 +53,27 @@ const NavigationSidebar = () => {
       permission: 'event_management'
     },
     {
+      label: t('navigation.focus_areas', 'Focus Areas'),
+      path: '/focus-areas',
+      icon: 'Target',
+      description: 'Strategic focus areas',
+      permission: 'focus_areas_management'
+    },
+    {
+      label: 'Member Inquisitive',
+      path: '/member-inquisitive',
+      icon: 'Video',
+      description: 'Member inquisitive videos',
+      permission: 'member_inquisitive_management'
+    },
+    {
+      label: 'Support Rotary',
+      path: '/support-rotary',
+      icon: 'Heart',
+      description: 'Manage support projects',
+      permission: 'support_rotary_management'
+    },
+    {
       label: t('navigation.projects', 'Projects'),
       path: '/project-management',
       icon: 'FolderOpen',
@@ -81,6 +102,13 @@ const NavigationSidebar = () => {
       permission: 'communication_center'
     },
     {
+      label: 'Landing Content',
+      path: '/landing-content-form',
+      icon: 'Video',
+      description: 'Manage landing page video',
+      permission: 'content_management'
+    },
+    {
       label: t('navigation.settings', 'Settings'),
       path: '/settings',
       icon: 'Settings',
@@ -93,6 +121,13 @@ const NavigationSidebar = () => {
       icon: 'Zap',
       description: 'Amazing alert system demo',
       permission: 'dashboard'
+    },
+    {
+      label: 'Team Management',
+      path: '/admin/about',
+      icon: 'Users',
+      description: 'Manage club team members',
+      permission: 'content_management'
     }
   ];
 
@@ -154,7 +189,8 @@ const NavigationSidebar = () => {
   };
 
   const SidebarContent = () => (
-    <nav className={`flex-1 ${sidebarCollapsed ? 'px-2' : 'px-4'} py-6 space-y-2 overflow-auto custom-scrollbar`}>
+    <div className="flex-1 flex flex-col min-h-0">
+      <nav className={`flex-1 ${sidebarCollapsed ? 'px-2' : 'px-4'} py-6 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar`}>
       {/* Main Navigation */}
       {navigationItems.filter(item => hasPermission(item.permission)).map((item) => {
         const isActive = isActiveRoute(item.path);
@@ -317,6 +353,7 @@ const NavigationSidebar = () => {
         </>
       )}
     </nav>
+    </div>
   );
 
   return (
@@ -326,7 +363,7 @@ const NavigationSidebar = () => {
       {/* Sidebar - always visible on all screen sizes */}
       <aside className={`fixed inset-y-0 left-0 z-40 ${sidebarCollapsed ? 'w-20' : 'w-64'} flex flex-col transition-all duration-300 ${isDarkMode ? 'dark' : ''}`}>
         <div
-          className="flex flex-col flex-1 min-h-0 border-r"
+          className="flex flex-col h-full border-r"
           style={{
             backgroundColor: isDarkMode ? appearanceSettings.primaryColor : '#ffffff',
             borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'

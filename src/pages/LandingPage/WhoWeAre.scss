@@ -1,0 +1,403 @@
+// .wwATitle{
+//     font-family: "Unbounded", sans-serif;
+//     font-size: 35px;
+//     line-height: 160%;
+//     color: #000;
+//     text-align: left;
+//     margin-top: 2rem;
+// }
+// .WWAContainer{
+//     display: flex; 
+//     align-items: center; 
+//     justify-content: space-between;
+//     padding: 20px 0;
+    
+//     color: #000;
+
+//     .WWALeftContainer{
+//         display: flex;
+//         gap: 1rem;
+//         flex-direction: column;
+//     }
+//     .LeftContentTitle{
+//         display: flex;
+//         gap: 1rem;
+//         width: 330px; 
+//         padding: 0.5rem;
+//         text-align: left;
+//         border: #C8C8C8 solid 1px;
+//         border-radius: 12px;
+
+//         .Head{
+//             font-family: "Unbounded", sans-serif;
+//             font-size: 18px;
+//         }
+
+//         .desc{
+//             font-family: "Inter", sans-serif;
+//             font-size: 11.5px;
+//             line-height: 160%;
+//             color: #575757;
+//         }
+//     }
+
+
+
+      
+
+// }
+
+.wwATitle {
+    font-family: "Unbounded", sans-serif;
+    font-size: 35px;
+    line-height: 160%;
+    color: #000;
+    text-align: left;
+    margin-top: 2rem;
+  }
+
+  .leadership-swiper-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* Limit max width to match the main card */
+    // padding: 0 40px; /* Space for navigation buttons */
+    margin : 3rem 0;
+    overflow: hidden; /* Hide overflowing content */
+
+    .swiper-wrapper {
+      display: flex;
+      align-items: stretch; /* Ensure all slides stretch to the same height */
+    }
+
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      width: 100% !important; /* Ensure each slide takes full width */
+    }
+
+    .swiper-wrapper {
+      gap: 20px; /* Use gap for spacing between slides */
+    }
+
+    .SubContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      font-family: "Unbounded", sans-serif;
+      font-size: clamp(10px, 2vw, 12px);
+      color: #000;
+      background-color: #fff;
+      border-radius: 8px;
+      margin: 0.2rem;
+      padding: 0.6rem 0; // reduced padding
+      border: #E0E0E0 solid 1px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .sLeaderImg {
+        width: 90px;  // ↓ from 110px
+        height: 90px; // ↓ from 110px
+        margin-bottom: 6px;
+        object-fit: cover;
+        border-radius: 8px; 
+      }
+
+      .subcontDesc {
+        font-family: "Inter", sans-serif;
+        font-size: clamp(8px, 1.2vw, 10px);
+        color: #575757;
+        line-height: 120%;
+        width: 100%;
+      }
+    }
+
+    .swiper-button-prev-leadership,
+    .swiper-button-next-leadership {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      cursor: pointer;
+      background: #dbdbdb;
+      width: 36px;
+      height: 36px;
+      border-radius: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: #aaaaaa;
+        transition: 0.5s;
+      }
+    }
+
+    .swiper-button-prev-leadership {
+      left: 0;
+    }
+
+    .swiper-button-next-leadership {
+      right: 0;
+    }
+  }
+  
+  .WWAContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    color: #000;
+  
+    .WWALeftContainer {
+      display: flex;
+      gap: 1.2rem;
+      flex-direction: column;
+      flex-shrink: 0;
+      width: fit-content;
+    }
+  
+    .LeftContentTitle {
+      display: flex;
+      gap: 1rem;
+      width: 280px;
+      padding: 1rem;
+      text-align: left;
+      border: #E0E0E0 solid 1px;
+      border-radius: 16px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .Head {
+        font-family: "Unbounded", sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      .desc {
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        line-height: 150%;
+        color: #666666;
+      }
+    }
+  
+    .WWARightContent {
+      background-color: #c8c8c863;
+      display: flex;
+      flex: 1;
+      padding: 0 1rem; 
+      margin: 0 1rem;
+      border-radius: 16px;
+
+      justify-content: center; /* Center content when wrapped */
+  
+      .mot {
+        font-family: "Unbounded", sans-serif;
+        font-size: 16px;
+        margin: 1rem 0;
+        color: #000;
+        text-align: left;
+      }
+  
+      .WWARightStaffContainer {
+        display: flex;
+        text-align: left;
+        justify-content: flex-start;
+        background-color: #fff;
+        width: 100%;
+        max-width: 400px; // ↓ from 400px
+        padding: 0.75rem;
+        gap: 1rem;
+        border-radius: 16px;
+        border: #E0E0E0 solid 1px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        img{
+          
+        }
+  
+        .WWARightStaffContent {
+          width: 240px; // ↓ from 300px
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+  
+          .PrsdName {
+            font-family: "Unbounded", sans-serif;
+            font-size: 16px;
+            color: #000;
+          }
+  
+          .position {
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            color: #575757;
+          }
+  
+          .Desc {
+            font-family: "Inter", sans-serif;
+            font-size: 12px;
+            color: #575757;
+            line-height: 160%;
+          }
+  
+          .readmore {
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            color: #575757;
+            line-height: 160%;
+            cursor: pointer;
+            text-decoration: underline;
+  
+            &:hover {
+              color: #000;
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+      .WWARightStaffSubContainer {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); // 2 columns
+        grid-gap: 12px;  // ↓ from 20px
+        max-width: 300px; // optional, can tweak
+        font-family: "Unbounded", sans-serif;
+        font-size: 12px;
+        color: #000;
+        background-color: #fff;
+        padding: 0.6rem; // ↓ from 1rem
+        border-radius: 16px;
+        border: #E0E0E0 solid 1px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+        .SubContent {
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+      
+          .sLeaderImg {
+            width: 90px;  // ↓ from 130px
+            height: 90px; // ↓ from 130px 
+            object-fit: cover; 
+                    border-radius: 6px;
+          }
+        }
+      
+        .subcontDesc {
+          font-family: "Inter", sans-serif;
+          font-size: 9px;
+          color: #575757;
+          line-height: 120%;
+        }
+      }
+      
+    }
+  }
+  .VPGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 1rem;
+  }
+  
+  .SubContent {
+    width: 100%;
+    max-width: 140px;
+    text-align: center;
+  }
+  
+  .sLeaderImg {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 100%;
+  }
+  
+  .subcontDesc {
+    font-size: 12px;
+    margin-top: 0.5rem;
+  }
+  
+  .single {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+  }
+  
+
+  @media (max-width: 375px) {
+    .SubContent .sLeaderImg {
+      width: 70px;
+      height: 70px;
+    }
+  }
+  @media (max-width: 499px) {
+    .leadership-swiper-container {
+      max-width: 300px !important;
+      padding: 0 !important;
+    }
+
+    .WWAContainer .WWARightContent .WWARightStaffContainer{
+      flex-wrap: wrap  !important; 
+    }  
+    .SubContent{
+      margin: 0 !important;
+    }
+    
+    .leadership-swiper-container{
+      max-width: 300px !important;
+      padding: 0 !important;
+    }
+  }
+  @media (max-width: 1280px) {
+  .WWAContainer{
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 1rem;
+  }
+  .WWARightStaffContent{
+    text-align: center !important;
+  }
+
+  .WWAContainer .WWARightContent{
+    flex-wrap: wrap !important;
+
+  }
+
+  .WWAContainer .WWARightContent .WWARightStaffContainer{
+  
+    width: 75vw;
+    justify-content: center;
+    
+    img{
+      // width: 500px;
+      height: 250px;
+      object-fit: contain;
+    }
+  }
+}

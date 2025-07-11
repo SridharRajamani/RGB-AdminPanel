@@ -1,0 +1,247 @@
+.joinus-container {
+    min-height: 100vh; 
+    color: rgb(0, 0, 0);
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+  }
+  
+  .joinus-header {
+    color: rgb(0, 0, 0);
+    padding: 40px 60px; 
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .membership-benefits {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 80px;
+  }
+  
+  .benefits-column {
+    flex: 1;
+  }
+  
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+  }
+  
+  .checkmark {
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  
+  .number {
+    color: #000;  
+    font-size: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  
+  .benefit-text {
+    color: #333;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .form-section {
+    background: #d3d3d3;
+    padding: 60px 20px;
+    border-radius: 40px 40px 0 0;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .form-title {
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: #333;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .membership-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 2rem;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .form-input,
+  .form-select {
+    flex: 1;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .form-input::placeholder {
+    color: #999;
+  }
+  
+  .form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+  }
+  
+  .form-input:focus,
+  .form-select:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border: 2px solid #3b82f6;
+  }
+  
+  .form-textarea {
+    /* width: 100%; */
+    padding: 15px 20px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    resize: vertical;
+    font-family: inherit;
+    transition: all 0.3s ease;
+  }
+  
+  .form-textarea::placeholder {
+    color: #999;
+  }
+  
+  .form-textarea:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border: 2px solid #3b82f6;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+  }
+  
+  .checkbox-input {
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+  }
+  
+  .checkbox-label {
+    color: #555;
+    font-size: 16px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .submit-btn {
+    background: #3b4ba8;
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    text-transform: capitalize;
+    width: fit-content;
+    transition: all 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background: #2d3a8c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 75, 168, 0.3);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .membership-benefits {
+      flex-direction: column;
+      gap: 40px;
+      padding: 2rem;
+    }
+    
+    .joinus-header {
+      padding: 20px 30px;
+    }
+    
+    .form-row {
+      flex-direction: column;
+    }
+    
+    .form-title {
+      font-size: 2rem;
+    }
+    
+    .form-section {
+      padding: 40px 20px;
+    }
+    .joinus-container {
+      padding: 12px 0;
+    }
+    .joinus-header,
+    .form-section {
+      max-width: 93vw;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .form-title {
+      font-size: 1.8rem;
+    }
+    
+    .joinus-header {
+      padding: 20px;
+    }
+    
+    .benefit-text {
+      font-size: 13px;
+    }
+  }
+  
+  .membership-benefits h2 {
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: #222;
+    margin-bottom: 18px;
+    letter-spacing: 0.01em;
+    font-family: 'Unbounded', sans-serif;
+    text-align: left;
+  }
+  

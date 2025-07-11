@@ -1,0 +1,56 @@
+
+button {
+	font-size: 30px;
+	padding: 10px 30px;
+	margin: 10px;
+	border: 0;
+	cursor: pointer;
+	color: black;
+	text-transform: lowercase;
+	border-radius: 10px;
+	display: inline-block;
+	overflow: hidden;
+	transition: all 0.4s cubic-bezier(.86, .01, .15, .99);
+}
+
+button::before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0;
+}
+
+/* every gradient button will translate upwards on hover */
+
+button.gradient:hover {
+	color: white; 
+	transform: translateY(-5px);
+}
+
+
+/*Button THree*/
+
+.button-three {
+	-webkit-transform: perspective(1px) translateZ(0);
+	background: #08aa61;
+	transform: perspective(1px) translateZ(0);
+	position: relative;
+	transition-timing-function: cubic-bezier(.86, .01, .15, .99);
+	transition-duration: 0.4ss;
+}
+
+.button-three:before {
+	background: linear-gradient(to bottom, #88daa1, #08aa61);
+	transform: scaleY(0);
+	transform-origin: 0% 0%;
+	transition: 0.4s cubic-bezier(.86, .01, .15, .99);
+}
+
+.button-three:hover:before {
+	-webkit-transform: scaleY(1);
+	transform: scaleY(1);
+}
+

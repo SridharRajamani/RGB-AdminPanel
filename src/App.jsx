@@ -6,6 +6,7 @@ import { SystemSettingsProvider } from "./context/SystemSettingsContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import CoolAlertProvider from "./components/ui/CoolAlertProvider";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -27,22 +28,24 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <SystemSettingsProvider>
-        <LanguageProvider>
-          <NotificationProvider>
-            <AuthProvider>
-              <CoolAlertProvider>
-                <Routes
-                  isSidebarCollapsed={isSidebarCollapsed}
-                  isSidebarVisible={isSidebarVisible}
-                />
-              </CoolAlertProvider>
-            </AuthProvider>
-          </NotificationProvider>
-        </LanguageProvider>
-      </SystemSettingsProvider>
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID_HERE">
+      <ThemeProvider>
+        <SystemSettingsProvider>
+          <LanguageProvider>
+            <NotificationProvider>
+              <AuthProvider>
+                <CoolAlertProvider>
+                  <Routes
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    isSidebarVisible={isSidebarVisible}
+                  />
+                </CoolAlertProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </LanguageProvider>
+        </SystemSettingsProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 }
 

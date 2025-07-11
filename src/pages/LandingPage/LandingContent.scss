@@ -1,0 +1,180 @@
+.landing-container{
+    display: flex; 
+    // flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: #fff;
+    color: #000;
+    text-align: left;
+    font-family: "Unbounded", sans-serif;
+    gap:5rem; 
+    padding:2rem;
+
+    .landing-content{
+        display: flex;
+        flex-direction: column; 
+        row-gap: 1rem;
+        padding: 4rem 0;
+        font-size: 18px;
+        position: relative;
+        z-index: 1;
+        .content-para{
+        line-height:  160%; 
+        font-size: 14px;
+        font-family: "inter", sans-serif;
+
+        }
+
+        .donate-buttons-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .DonateBtn{
+            background-color: #252569;
+            width: max-content;
+            padding: 0 1.5rem;
+            cursor: pointer;
+            height: 55px;
+            color: #fff;
+            font-size: 17px;
+            font-weight:400;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-around;
+            gap: 0.5rem;
+            font-family: "inter", sans-serif;
+            align-items: center; 
+
+            &:hover{
+                background-color: #1a1a77;
+                color: #fff;
+                box-shadow: 0px 0px 10px 0px #0000001a;
+ 
+            }
+
+        }
+    }
+
+    .subscribe-btn {
+        width: max-content;
+        padding: 0 1.5rem;
+        cursor: pointer;
+        height: 55px;
+        color: #ffffff;
+        font-size: 17px; 
+            gap: 0.5rem;
+            font-weight: 400;
+        border-radius: 16px;
+        display: flex;
+        justify-content: space-around;
+        font-family: "inter", sans-serif;
+        align-items: center; 
+
+        background-color: #2196F3         ;
+        &:hover {
+            background-color: #1976D2;
+        }
+    }
+    }
+
+    .hdName{
+        color: #717171;
+        font-size: clamp(1.5rem, 5vw, 2.4375rem);
+
+        line-height: 28px;
+    }
+
+    .brndName{
+      font-size: clamp(2.25rem, 5vw, 3.4375rem);
+        color: #000;
+      
+
+    }
+    .video-container{
+        position: relative;
+        z-index: 1;
+
+       
+    }
+
+    .LandingContent{
+        width:650px;
+    }
+
+   
+      
+ 
+.marquee-container{
+    position: relative;
+    z-index: 263;
+    color: #000;
+}
+
+// .Bgvideo{
+//     position: absolute;  
+//     object-fit: fill;
+//     z-index: 0; 
+//     top: -120px;  
+//     left: 0;
+//     overflow: hidden;
+//     background-color: #fff; 
+//     opacity: 25%;
+// }
+
+
+
+
+.Bgvideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; // behind all content
+    overflow: hidden;
+  
+    .bg-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.25;
+    }
+  }
+
+  
+
+ 
+
+
+
+@media screen  and (min-width: 320px) and (max-width: 768px) {
+    .brndName{
+        line-height:1;
+        // font-weight: 500;
+    }
+  .landing-container{ 
+   padding: 1rem;
+   gap: 1rem;
+   flex-wrap: wrap;
+//    height: 250px !important; 
+   .landing-content { 
+    row-gap: 1.5rem; 
+    padding: 0 !important;
+    text-align: center;
+    .donate-buttons-container {
+        flex-direction: column;
+       align-items: center;
+        gap: .5rem;
+    }
+   }
+   .LandingContent {
+    width: 100% !important;  
+   }
+
+   .videodiv{
+      width: 100%;
+  }
+  }
+     
+}

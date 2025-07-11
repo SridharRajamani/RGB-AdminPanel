@@ -1,8 +1,8 @@
 // Export utilities for PDF and Excel generation
 // Note: Requires installation of: npm install jspdf jspdf-autotable xlsx file-saver
 
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
@@ -27,6 +27,26 @@ const formatDate = (dateString) => {
     month: 'short',
     day: 'numeric'
   });
+};
+
+/**
+ * Format phone number for display
+ */
+const formatPhone = (phone) => {
+  return phone || 'N/A';
+};
+
+/**
+ * Get status display text
+ */
+const getStatusText = (status) => {
+  const statusMap = {
+    'active': 'Active',
+    'inactive': 'Inactive',
+    'pending': 'Pending',
+    'suspended': 'Suspended'
+  };
+  return statusMap[status] || status;
 };
 
 /**
@@ -94,7 +114,7 @@ export const exportDonationHistoryToPDF = (donations, filters = {}) => {
     ]);
     
     // Add table
-    doc.autoTable({
+    autoTable(doc, {
       head: [tableColumns],
       body: tableRows,
       startY: yPosition,
@@ -228,97 +248,536 @@ export const exportDonationHistoryToExcel = (donations, filters = {}) => {
  */
 export const exportDonationSummaryToPDF = (summaryData, chartData) => {
   try {
+    console.log('Creating professional PDF...');
     const doc = new jsPDF();
-    
-    // Add header
-    doc.setFontSize(20);
-    doc.setTextColor(37, 37, 105);
-    doc.text('Rotary Club - Donation Summary Report', 20, 20);
-    
-    // Add generation date
+
+    // Professional Header Design
+    // Top blue header bar
+    doc.setFillColor(41, 128, 185); // Professional blue
+    doc.rect(0, 0, 210, 25, 'F');
+
+    // Company name in header
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ROTARY CLUB GULMOHAR BANGALORE', 15, 16);
+
+    // Document title section
+    doc.setFontSize(24);
+    doc.setTextColor(41, 128, 185);
+    doc.setFont('helvetica', 'bold');
+    doc.text('DONATION SUMMARY', 15, 40);
+
+    // Document info box (top right)
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.rect(130, 30, 65, 35);
+
+    // Document details
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Generated on: ${new Date().toLocaleDateString('en-IN')}`, 20, 30);
-    
-    let yPosition = 50;
-    
-    // Summary metrics
-    doc.setFontSize(16);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Report Date:', 135, 38);
+    doc.text('Generated:', 135, 45);
+    doc.text('Period:', 135, 52);
+    doc.text('Status:', 135, 59);
+
+    // Document values
     doc.setTextColor(0, 0, 0);
-    doc.text('Key Metrics', 20, yPosition);
+    doc.setFont('helvetica', 'bold');
+    const currentDate = new Date().toLocaleDateString('en-IN');
+    const currentTime = new Date().toLocaleTimeString('en-IN', { hour12: false });
+    doc.text(currentDate, 165, 38);
+    doc.text(currentTime, 165, 45);
+    doc.text('FY 2024-25', 165, 52);
+    doc.text('ACTIVE', 165, 59);
+
+    let yPosition = 85;
+    
+    // Summary Overview Section
+    doc.setFontSize(14);
+    doc.setTextColor(41, 128, 185);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SUMMARY OVERVIEW', 15, yPosition);
     yPosition += 15;
-    
-    const metrics = [
+
+    // Create two-column layout for key metrics
+    const leftColumnMetrics = [
       ['Total Donations', formatCurrency(summaryData.totalDonations)],
-      ['Total Donors', summaryData.totalDonors.toString()],
       ['Average Donation', formatCurrency(summaryData.averageDonation)],
-      ['Monthly Donations', formatCurrency(summaryData.monthlyDonations)],
-      ['Active Campaigns', summaryData.activeCampaigns.toString()],
-      ['Completed Campaigns', summaryData.completedCampaigns.toString()],
-      ['Pending Donations', formatCurrency(summaryData.pendingDonations)],
-      ['Recurring Donors', summaryData.recurringDonors.toString()]
+      ['Active Campaigns', summaryData.activeCampaigns.toLocaleString('en-IN')],
+      ['Pending Donations', formatCurrency(summaryData.pendingDonations)]
     ];
-    
-    doc.autoTable({
-      body: metrics,
+
+    const rightColumnMetrics = [
+      ['Total Donors', summaryData.totalDonors.toLocaleString('en-IN')],
+      ['Monthly Donations', formatCurrency(summaryData.monthlyDonations)],
+      ['Completed Campaigns', summaryData.completedCampaigns.toLocaleString('en-IN')],
+      ['Recurring Donors', summaryData.recurringDonors.toLocaleString('en-IN')]
+    ];
+
+    // Left column table
+    autoTable(doc, {
+      body: leftColumnMetrics,
       startY: yPosition,
       styles: {
         fontSize: 10,
-        cellPadding: 5,
+        cellPadding: 6,
+        lineColor: [220, 220, 220],
+        lineWidth: 0.3
       },
       columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 60 },
-        1: { halign: 'right', cellWidth: 60 }
+        0: {
+          cellWidth: 45,
+          fontStyle: 'normal',
+          textColor: [100, 100, 100],
+          fillColor: [250, 250, 250]
+        },
+        1: {
+          cellWidth: 40,
+          halign: 'right',
+          fontStyle: 'bold',
+          textColor: [0, 0, 0]
+        }
       },
-      theme: 'grid'
+      margin: { left: 15 },
+      tableWidth: 85
     });
-    
-    // Campaign performance
+
+    // Right column table
+    autoTable(doc, {
+      body: rightColumnMetrics,
+      startY: yPosition,
+      styles: {
+        fontSize: 10,
+        cellPadding: 6,
+        lineColor: [220, 220, 220],
+        lineWidth: 0.3
+      },
+      columnStyles: {
+        0: {
+          cellWidth: 45,
+          fontStyle: 'normal',
+          textColor: [100, 100, 100],
+          fillColor: [250, 250, 250]
+        },
+        1: {
+          cellWidth: 40,
+          halign: 'right',
+          fontStyle: 'bold',
+          textColor: [0, 0, 0]
+        }
+      },
+      margin: { left: 110 },
+      tableWidth: 85
+    });
+
+    // Campaign Performance Section
     if (chartData && chartData.campaignData) {
-      yPosition = doc.lastAutoTable.finalY + 20;
-      doc.setFontSize(16);
-      doc.text('Campaign Performance', 20, yPosition);
+      yPosition = doc.lastAutoTable.finalY + 30;
+
+      // Section header
+      doc.setFontSize(14);
+      doc.setTextColor(41, 128, 185);
+      doc.setFont('helvetica', 'bold');
+      doc.text('CAMPAIGN PERFORMANCE', 15, yPosition);
       yPosition += 15;
-      
-      const campaignRows = chartData.campaignData.map(campaign => [
-        campaign.name,
-        formatCurrency(campaign.raised),
-        formatCurrency(campaign.target),
-        `${((campaign.raised / campaign.target) * 100).toFixed(1)}%`,
-        campaign.donors.toString()
-      ]);
-      
-      doc.autoTable({
-        head: [['Campaign', 'Raised', 'Target', 'Progress', 'Donors']],
+
+      const campaignRows = chartData.campaignData.map(campaign => {
+        const progress = ((campaign.raised / campaign.target) * 100).toFixed(1);
+        return [
+          campaign.name,
+          formatCurrency(campaign.raised),
+          formatCurrency(campaign.target),
+          `${progress}%`,
+          campaign.donors.toLocaleString('en-IN')
+        ];
+      });
+
+      autoTable(doc, {
+        head: [['Campaign Name', 'Raised', 'Target', 'Progress', 'Donors']],
         body: campaignRows,
         startY: yPosition,
         styles: {
           fontSize: 9,
-          cellPadding: 3,
+          cellPadding: 5,
+          lineColor: [220, 220, 220],
+          lineWidth: 0.3
         },
         headStyles: {
-          fillColor: [37, 37, 105],
-          textColor: 255,
-          fontStyle: 'bold'
+          fillColor: [41, 128, 185],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 10
         },
         columnStyles: {
-          1: { halign: 'right' },
-          2: { halign: 'right' },
-          3: { halign: 'center' },
-          4: { halign: 'center' }
-        }
+          0: {
+            cellWidth: 60,
+            fontStyle: 'normal',
+            textColor: [0, 0, 0]
+          },
+          1: {
+            cellWidth: 35,
+            halign: 'right',
+            textColor: [0, 0, 0],
+            fontStyle: 'bold'
+          },
+          2: {
+            cellWidth: 35,
+            halign: 'right',
+            textColor: [100, 100, 100]
+          },
+          3: {
+            cellWidth: 25,
+            halign: 'center',
+            fontStyle: 'bold',
+            textColor: [41, 128, 185]
+          },
+          4: {
+            cellWidth: 25,
+            halign: 'center',
+            textColor: [0, 0, 0]
+          }
+        },
+        alternateRowStyles: {
+          fillColor: [248, 248, 248]
+        },
+        margin: { left: 15, right: 15 }
       });
     }
     
-    // Save the PDF
-    const fileName = `donation-summary-${new Date().toISOString().split('T')[0]}.pdf`;
+    // Professional Footer Section
+    const pageHeight = doc.internal.pageSize.height;
+    const footerY = pageHeight - 40;
+
+    // Add separator line
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.5);
+    doc.line(15, footerY - 10, 195, footerY - 10);
+
+    // Footer content - Company info
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Rotary Club Gulmohar Bangalore', 15, footerY);
+    doc.text('Service Above Self', 15, footerY + 6);
+
+    // Contact information
+    doc.setFontSize(8);
+    doc.text('Email: contact@rotarygulmohar.org', 15, footerY + 15);
+    doc.text('Phone: +91-80-XXXX-XXXX', 15, footerY + 21);
+    doc.text('Website: www.rotarygulmohar.org', 15, footerY + 27);
+
+    // Document info (right side)
+    doc.setTextColor(41, 128, 185);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CONFIDENTIAL DOCUMENT', 130, footerY);
+
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('This report contains confidential financial information', 130, footerY + 6);
+    doc.text('Generated automatically by Rotary Management System', 130, footerY + 12);
+
+    // Page number
+    doc.setTextColor(150, 150, 150);
+    doc.text('Page 1 of 1', 175, footerY + 27);
+
+    // Save with professional filename
+    const timestamp = new Date().toISOString().split('T')[0];
+    const fileName = `Donation-Summary-Report-${timestamp}.pdf`;
     doc.save(fileName);
-    
+
     return { success: true, fileName };
   } catch (error) {
     console.error('Error generating summary PDF:', error);
     return { success: false, error: error.message };
   }
+};
+
+/**
+ * Export member list to PDF
+ */
+export const exportMemberListToPDF = (members, filters = {}) => {
+  try {
+    console.log('Creating member list PDF...');
+    const doc = new jsPDF();
+
+    // Professional Header Design
+    // Top blue header bar
+    doc.setFillColor(41, 128, 185); // Professional blue
+    doc.rect(0, 0, 210, 25, 'F');
+
+    // Company name in header
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ROTARY CLUB GULMOHAR BANGALORE', 15, 16);
+
+    // Document title section
+    doc.setFontSize(24);
+    doc.setTextColor(41, 128, 185);
+    doc.setFont('helvetica', 'bold');
+    doc.text('MEMBER DIRECTORY', 15, 40);
+
+    // Document info box (top right)
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.rect(130, 30, 65, 35);
+
+    // Document details
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Report Date:', 135, 38);
+    doc.text('Total Members:', 135, 45);
+    doc.text('Status:', 135, 52);
+    doc.text('Generated:', 135, 59);
+
+    // Document values
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    const currentDate = new Date().toLocaleDateString('en-IN');
+    const currentTime = new Date().toLocaleTimeString('en-IN', { hour12: false });
+    doc.text(currentDate, 165, 38);
+    doc.text(members.length.toString(), 165, 45);
+    doc.text('ACTIVE', 165, 52);
+    doc.text(currentTime, 165, 59);
+
+    let yPosition = 85;
+
+    // Add filters info if any
+    if (filters.membershipType || filters.status || filters.committee) {
+      doc.setFontSize(12);
+      doc.setTextColor(41, 128, 185);
+      doc.setFont('helvetica', 'bold');
+      doc.text('APPLIED FILTERS', 15, yPosition);
+      yPosition += 10;
+
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.setFont('helvetica', 'normal');
+
+      if (filters.membershipType) {
+        doc.text(`Membership Type: ${filters.membershipType}`, 15, yPosition);
+        yPosition += 6;
+      }
+      if (filters.status) {
+        doc.text(`Status: ${getStatusText(filters.status)}`, 15, yPosition);
+        yPosition += 6;
+      }
+      if (filters.committee) {
+        doc.text(`Committee: ${filters.committee}`, 15, yPosition);
+        yPosition += 6;
+      }
+      yPosition += 10;
+    }
+
+    // Member table
+    const tableColumns = ['Name', 'ID', 'Type', 'Status', 'Committee', 'Join Date', 'Contact'];
+    const tableRows = members.map(member => [
+      member.name,
+      member.membershipId,
+      member.membershipType,
+      getStatusText(member.status),
+      member.committee || 'N/A',
+      member.joinDate,
+      member.email
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumns],
+      body: tableRows,
+      startY: yPosition,
+      styles: {
+        fontSize: 8,
+        cellPadding: 4,
+        lineColor: [220, 220, 220],
+        lineWidth: 0.3
+      },
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9
+      },
+      columnStyles: {
+        0: { cellWidth: 35, fontStyle: 'bold' }, // Name
+        1: { cellWidth: 20, halign: 'center' }, // ID
+        2: { cellWidth: 25, halign: 'center' }, // Type
+        3: { cellWidth: 20, halign: 'center' }, // Status
+        4: { cellWidth: 25 }, // Committee
+        5: { cellWidth: 25, halign: 'center' }, // Join Date
+        6: { cellWidth: 40 } // Contact
+      },
+      alternateRowStyles: {
+        fillColor: [248, 248, 248]
+      },
+      margin: { left: 15, right: 15 }
+    });
+
+    // Professional Footer
+    const pageHeight = doc.internal.pageSize.height;
+    const footerY = pageHeight - 40;
+
+    // Add separator line
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.5);
+    doc.line(15, footerY - 10, 195, footerY - 10);
+
+    // Footer content
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Rotary Club Gulmohar Bangalore', 15, footerY);
+    doc.text('Service Above Self', 15, footerY + 6);
+
+    // Contact information
+    doc.setFontSize(8);
+    doc.text('Email: contact@rotarygulmohar.org', 15, footerY + 15);
+    doc.text('Phone: +91-80-XXXX-XXXX', 15, footerY + 21);
+
+    // Document info (right side)
+    doc.setTextColor(41, 128, 185);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CONFIDENTIAL DOCUMENT', 130, footerY);
+
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.text('This report contains confidential member information', 130, footerY + 6);
+
+    // Page number
+    doc.setTextColor(150, 150, 150);
+    doc.text('Page 1 of 1', 175, footerY + 21);
+
+    // Save with professional filename
+    const timestamp = new Date().toISOString().split('T')[0];
+    const fileName = `Member-Directory-${timestamp}.pdf`;
+    doc.save(fileName);
+
+    return { success: true, fileName };
+  } catch (error) {
+    console.error('Error generating member PDF:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Export member list to Excel
+ */
+export const exportMemberListToExcel = (members, filters = {}) => {
+  try {
+    console.log('Creating member Excel export...');
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+
+    // Prepare member data for Excel
+    const memberData = members.map(member => ({
+      'Member ID': member.membershipId,
+      'Full Name': member.name,
+      'Email': member.email,
+      'Phone': formatPhone(member.phone),
+      'Membership Type': member.membershipType,
+      'Status': getStatusText(member.status),
+      'Designation': member.designation || 'N/A',
+      'Committee': member.committee || 'N/A',
+      'Join Date': member.joinDate,
+      'Last Activity': member.lastActivity || 'N/A',
+      'Address': member.address || 'N/A',
+      'Emergency Contact': member.emergencyContact || 'N/A',
+      'Emergency Phone': formatPhone(member.emergencyPhone),
+      'Profession': member.profession || 'N/A',
+      'Company': member.company || 'N/A',
+      'Skills': member.skills || 'N/A',
+      'Interests': member.interests || 'N/A'
+    }));
+
+    // Create main worksheet
+    const ws = XLSX.utils.json_to_sheet(memberData);
+
+    // Set column widths
+    const colWidths = [
+      { wch: 12 }, // Member ID
+      { wch: 25 }, // Full Name
+      { wch: 30 }, // Email
+      { wch: 18 }, // Phone
+      { wch: 15 }, // Membership Type
+      { wch: 12 }, // Status
+      { wch: 20 }, // Designation
+      { wch: 20 }, // Committee
+      { wch: 12 }, // Join Date
+      { wch: 15 }, // Last Activity
+      { wch: 40 }, // Address
+      { wch: 25 }, // Emergency Contact
+      { wch: 18 }, // Emergency Phone
+      { wch: 25 }, // Profession
+      { wch: 30 }, // Company
+      { wch: 40 }, // Skills
+      { wch: 40 }  // Interests
+    ];
+    ws['!cols'] = colWidths;
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Member Directory');
+
+    // Create summary worksheet
+    const summaryData = [
+      ['Report Information', ''],
+      ['Generated Date', new Date().toLocaleDateString('en-IN')],
+      ['Generated Time', new Date().toLocaleTimeString('en-IN')],
+      ['Total Members', members.length],
+      ['', ''],
+      ['Membership Type Breakdown', ''],
+      ...getMembershipTypeBreakdown(members),
+      ['', ''],
+      ['Status Breakdown', ''],
+      ...getStatusBreakdown(members),
+      ['', ''],
+      ['Applied Filters', ''],
+      ['Membership Type', filters.membershipType || 'All'],
+      ['Status', filters.status || 'All'],
+      ['Committee', filters.committee || 'All']
+    ];
+
+    const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+    summaryWs['!cols'] = [{ wch: 25 }, { wch: 15 }];
+    XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
+
+    // Save file
+    const timestamp = new Date().toISOString().split('T')[0];
+    const fileName = `Member-Directory-${timestamp}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+
+    return { success: true, fileName };
+  } catch (error) {
+    console.error('Error generating member Excel:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Helper function to get membership type breakdown
+ */
+const getMembershipTypeBreakdown = (members) => {
+  const breakdown = {};
+  members.forEach(member => {
+    breakdown[member.membershipType] = (breakdown[member.membershipType] || 0) + 1;
+  });
+  return Object.entries(breakdown).map(([type, count]) => [type, count]);
+};
+
+/**
+ * Helper function to get status breakdown
+ */
+const getStatusBreakdown = (members) => {
+  const breakdown = {};
+  members.forEach(member => {
+    const status = getStatusText(member.status);
+    breakdown[status] = (breakdown[status] || 0) + 1;
+  });
+  return Object.entries(breakdown).map(([status, count]) => [status, count]);
 };
 
 /**

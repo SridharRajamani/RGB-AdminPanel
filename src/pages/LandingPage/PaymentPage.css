@@ -1,0 +1,313 @@
+.payment-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    text-transform: capitalize;
+  }
+  
+  .payment-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .payment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 20px;
+  }
+  
+  .back-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .payment-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  
+  .payment-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  
+  .order-summary {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    height: fit-content;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .order-summary h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  
+  .member-info h3 {
+    font-size: 1.25rem;
+    color: #333;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  
+  .member-info p {
+    color: #666;
+    margin-bottom: 24px;
+    text-transform: lowercase !important;
+  }
+  
+  .membership-plan {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .plan-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+  }
+  
+  .plan-duration {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .plan-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4f46e5;
+  }
+  
+  .benefits-list {
+    margin-bottom: 24px;
+  }
+  
+  .benefits-list h4 {
+    color: #333;
+    margin-bottom: 12px;
+    font-size: 1rem;
+  }
+  
+  .benefits-list ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .benefits-list li {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+  }
+  
+  .benefits-list li::before {
+    content: '✓';
+    color: #4CAF50;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+  
+  .total-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 2px solid #eee;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .amount {
+    color: #4f46e5;
+    font-size: 1.5rem;
+  }
+  
+  .payment-form {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .payment-form h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  
+  .payment-methods {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  
+  .method-btn {
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    justify-content: center;
+    flex: 1;
+    padding: 16px 12px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  
+  .method-btn.active {
+    border-color: #4f46e5;
+    background: #f8f9ff;
+    color: #4f46e5;
+  }
+  
+  .method-btn:hover {
+    border-color: #4f46e5;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+  
+  .security-info {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 24px 0;
+    text-align: center;
+  }
+  
+  .security-info p {
+    color: #15803d;
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .stripe-info, .upi-info, .netbanking-info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 16px 0;
+    text-align: center;
+  }
+  
+  .stripe-info p, .upi-info p, .netbanking-info p {
+    color: #1e40af;
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .pay-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+  }
+  
+  .pay-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+  }
+  
+  .pay-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .pay-btn.processing {
+    background: #6b7280;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .payment-content {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .payment-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .payment-title {
+      font-size: 2rem;
+    }
+    
+    .payment-methods {
+      flex-direction: column;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .order-summary,
+    .payment-form {
+      padding: 24px;
+    }
+  }
+  

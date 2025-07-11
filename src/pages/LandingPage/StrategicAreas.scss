@@ -1,0 +1,85 @@
+/* StrategicAreas.scss */
+.strategic-areas {
+    padding: 2rem; 
+    background-color: #f1eeff;  
+    text-align: left;
+    font-family: "Unbounded", sans-serif;
+    h2 {
+      font-size: 32px;
+      font-family: "Unbounded", sans-serif;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+  
+    p {
+      font-size: 13px;
+      color: #555;
+      font-family: "inter", sans-serif;  
+      margin-bottom: 30px;
+    }
+  
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+  
+    .card {
+      display: flex;
+      gap: 16px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0px 4px 23px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      position: relative;
+      overflow: hidden;
+
+      height: 160px;
+
+      &:hover {
+        .card-image {
+          transform: scale(1.01);
+          z-index: 10;
+        }
+      }
+  
+      .card-image {
+        width: 130px;
+        height: 128px; // Reduced from 160px to account for card padding (160px - 32px padding)
+        object-fit: cover;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+        flex-shrink: 0; // Prevent image from shrinking
+      }
+  
+      .card-content {
+        display: flex;
+        width: 150px; 
+        flex-direction: column;
+        justify-content: center;
+  
+        h3 {
+          font-size: 16px;
+          font-family: "Unbounded", sans-serif;
+          font-weight: 400;
+          text-align: center;
+          margin: 0;
+        }
+  
+        p {
+          font-size: 12px;
+          margin: 8px 0;
+          font-family: "inter", sans-serif;
+        }
+  
+        span {
+          font-size: 6px;
+          color: #838383;
+          font-family: "inter", sans-serif;
+
+        }
+      }
+    }
+  }
+  
