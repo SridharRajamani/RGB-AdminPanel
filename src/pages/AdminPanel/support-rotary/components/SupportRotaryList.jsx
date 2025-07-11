@@ -289,8 +289,12 @@ const SupportRotaryList = ({
                       variant="outline"
                       size="sm"
                       iconName="Trash2"
-                      onClick={() => onDeleteSupportProject(project.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => {
+                        if (window.confirm(`Are you sure you want to delete "${project.title}"? This action cannot be undone.`)) {
+                          onDeleteSupportProject(project.id);
+                        }
+                      }}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20"
                     >
                       Delete
                     </Button>

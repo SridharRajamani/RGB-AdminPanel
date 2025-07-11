@@ -306,77 +306,46 @@ const SupportRotaryManagement = ({ isSidebarVisible = true }) => {
     setIsViewModalOpen(true);
   };
 
-  const breadcrumbItems = [
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Support Rotary Management', path: '/support-rotary' }
-  ];
+
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+    <div className="min-h-screen bg-background">
       <Header />
       <NavigationSidebar isVisible={isSidebarVisible} />
 
-      <main style={{
-        marginLeft: isSidebarVisible ? '250px' : '0',
-        transition: 'margin-left 0.3s ease',
-        minHeight: '100vh',
-        backgroundColor: '#f8fafc'
-      }}>
-        <div style={{ padding: '24px' }}>
-          {/* Breadcrumb Navigation */}
-          <BreadcrumbNavigation items={breadcrumbItems} />
+      <main className={`${isSidebarVisible ? 'ml-64' : 'ml-0'} pt-10 transition-all duration-200`}>
+        <div className="p-6">
+          <BreadcrumbNavigation />
 
           {/* Page Header */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-            marginBottom: '32px'
-          }}>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  background: 'linear-gradient(135deg, #10b981, #3b82f6)',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                   <Icon name="Heart" size={24} color="white" />
                 </div>
-                <h1 style={{
-                  fontSize: '28px',
-                  fontWeight: 'bold',
-                  color: '#111827',
-                  margin: 0
-                }}>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
                   Support Rotary Management
                 </h1>
               </div>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '16px',
-                margin: 0
-              }}>
+              <p className="text-text-secondary">
                 Manage and organize your club's support projects and donation campaigns
               </p>
             </div>
 
-            <Button
-              variant="primary"
-              size="lg"
-              iconName="Plus"
-              iconPosition="left"
-              onClick={() => setIsCreateModalOpen(true)}
-              style={{
-                alignSelf: 'flex-start',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              Create Support Project
-            </Button>
+            {/* Create Button on Right */}
+            <div className="flex items-center">
+              <Button
+                variant="primary"
+                size="lg"
+                iconName="Plus"
+                iconPosition="left"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="shadow-lg"
+              >
+                Create Support Project
+              </Button>
+            </div>
           </div>
 
           {/* Support Projects List */}

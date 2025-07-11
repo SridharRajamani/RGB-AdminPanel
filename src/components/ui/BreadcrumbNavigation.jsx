@@ -14,7 +14,10 @@ const BreadcrumbNavigation = () => {
     '/financial-reports': { label: t('navigation.finance', 'Financial Reports'), icon: 'DollarSign' },
     '/project-management': { label: t('navigation.projects', 'Project Management'), icon: 'FolderOpen' },
     '/donations': { label: t('navigation.donations', 'Donations'), icon: 'Heart' },
-    '/communication-center': { label: t('navigation.communications', 'Communication Center'), icon: 'MessageSquare' }
+    '/communication-center': { label: t('navigation.communications', 'Communication Center'), icon: 'MessageSquare' },
+    '/support-rotary': { label: 'Support Rotary Management', icon: 'Heart' },
+    '/focus-areas': { label: 'Focus Areas Management', icon: 'Target' },
+    '/member-inquisitive': { label: 'Member Inquisitive Management', icon: 'Video' }
   };
 
   const generateBreadcrumbs = () => {

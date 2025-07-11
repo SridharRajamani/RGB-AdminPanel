@@ -242,86 +242,74 @@ const MemberInquisitiveManagement = ({ isSidebarCollapsed = false, isSidebarVisi
     );
   };
 
-  const breadcrumbItems = [
-    { label: 'Dashboard', href: '/admin' },
-    { label: 'Member Inquisitive Management', href: '/admin/member-inquisitive' }
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <NavigationSidebar
+        isCollapsed={isSidebarCollapsed}
+        isVisible={isSidebarVisible}
+        isOpen={isSidebarOpen}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+      />
       <AlertCenter />
-      
-      <div className="flex">
-        <NavigationSidebar 
-          isCollapsed={isSidebarCollapsed} 
-          isVisible={isSidebarVisible}
-          isOpen={isSidebarOpen}
-          onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-        />
-        
-        <div className={`flex-1 transition-all duration-300 ${
-          isSidebarVisible && !isSidebarCollapsed ? 'ml-64' : isSidebarVisible ? 'ml-16' : 'ml-0'
-        }`}>
-          <div className="px-6 py-4">
-            <BreadcrumbNavigation items={breadcrumbItems} />
 
-            {/* Page Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 mt-6">
-              <div>
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
-                    <Icon name="Video" size={28} color="white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-heading font-bold text-text-primary mb-1">
-                      Member Inquisitive Management
-                    </h1>
-                    <p className="text-text-secondary text-lg">
-                      Manage and organize member inquisitive videos and content for the landing page
-                    </p>
-                  </div>
+      <main className={`${!isSidebarVisible ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-64'} pt-10 transition-all duration-200`}>
+        <div className="p-6">
+          <BreadcrumbNavigation />
+
+          {/* Page Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <Icon name="Video" size={24} color="white" />
                 </div>
+                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                  Member Inquisitive Management
+                </h1>
               </div>
-
-              <div className="flex items-center gap-3 mt-4 lg:mt-0">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  iconName="Upload"
-                  iconPosition="left"
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="shadow-sm"
-                >
-                  Upload Video
-                </Button>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  iconName="Plus"
-                  iconPosition="left"
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="shadow-lg"
-                >
-                  Add Video
-                </Button>
-              </div>
+              <p className="text-text-secondary">
+                Manage and organize member inquisitive videos and content for the landing page
+              </p>
             </div>
 
-            {/* Videos List */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-              <MemberInquisitiveList
-                videos={videos}
-                onEditVideo={handleEditVideo}
-                onDuplicateVideo={handleDuplicateVideo}
-                onDeleteVideo={handleDeleteVideo}
-                onViewVideo={handleViewVideo}
-                onToggleStatus={handleToggleStatus}
-              />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="lg"
+                iconName="Upload"
+                iconPosition="left"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="shadow-sm"
+              >
+                Upload Video
+              </Button>
+              <Button
+                variant="primary"
+                size="lg"
+                iconName="Plus"
+                iconPosition="left"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="shadow-lg"
+              >
+                Add Video
+              </Button>
             </div>
           </div>
+
+          {/* Videos List */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <MemberInquisitiveList
+              videos={videos}
+              onEditVideo={handleEditVideo}
+              onDuplicateVideo={handleDuplicateVideo}
+              onDeleteVideo={handleDeleteVideo}
+              onViewVideo={handleViewVideo}
+              onToggleStatus={handleToggleStatus}
+            />
+          </div>
         </div>
-      </div>
+      </main>
 
       {/* Create Video Modal */}
       <CreateMemberInquisitiveModal
