@@ -47,7 +47,12 @@ const LandingContent = () => {
         try {
           const videoData = JSON.parse(storedVideo);
           if (videoData.url) {
+            // Ensure the video URL is valid and accessible
+            console.log('Loading uploaded video:', videoData.url);
             setCurrentVideo(videoData.url);
+          } else {
+            console.log('No video URL found, using default video');
+            setCurrentVideo(Video);
           }
         } catch (error) {
           console.error('Error parsing stored video data:', error);
@@ -56,6 +61,7 @@ const LandingContent = () => {
         }
       } else {
         // Use local video file stored in src/Images/Clip2.mp4 as default
+        console.log('No stored video found, using default video');
         setCurrentVideo(Video);
       }
     };
@@ -108,6 +114,21 @@ const LandingContent = () => {
   //   const timer = setTimeout(() => setShowLogin(true), 5000);
   //   return () => clearTimeout(timer);
   // }, []);
+
+  // Ensure video plays when source changes
+  useEffect(() => {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      if (video) {
+        video.load(); // Reload the video element
+        video.play().catch(error => {
+          console.log('Video autoplay prevented:', error);
+        });
+      }
+    });
+  }, [currentVideo]);
+
+
 
   return (
     <>
@@ -193,13 +214,31 @@ const LandingContent = () => {
       <div className='video-container'>
          <video
          className='videodiv'
+            key={currentVideo} // Force re-render when video changes
             src={currentVideo}
             muted
             loop
             autoPlay
+            playsInline
+            preload="auto"
             width={500}
             height={380}
             style={{ borderRadius: "12px", objectFit: "cover" }}
+            onError={(e) => {
+              console.error('Video error:', e);
+              // Fallback to default video if uploaded video fails
+              if (currentVideo !== Video) {
+                setCurrentVideo(Video);
+              }
+            }}
+            onLoadedData={() => {
+              console.log('Video loaded successfully:', currentVideo);
+            }}
+            onEnded={() => {
+              // Ensure video loops (backup for loop attribute)
+              e.target.currentTime = 0;
+              e.target.play();
+            }}
           />
       </div>
       </div>
@@ -268,16 +307,34 @@ const LandingContent = () => {
 <div className="Bgvideo">
   <video
     className="bg-video"
+    key={`bg-${currentVideo}`} // Force re-render when video changes
     src={currentVideo}
     muted
     loop
     autoPlay
     playsInline
+    preload="auto"
+    onError={(e) => {
+      console.error('Background video error:', e);
+      // Fallback to default video if uploaded video fails
+      if (currentVideo !== Video) {
+        setCurrentVideo(Video);
+      }
+    }}
+    onLoadedData={() => {
+      console.log('Background video loaded successfully:', currentVideo);
+    }}
+    onEnded={(e) => {
+      // Ensure video loops (backup for loop attribute)
+      e.target.currentTime = 0;
+      e.target.play();
+    }}
   />
 </div>
+
+
 
      </>
   );
 };
-
 export default LandingContent;

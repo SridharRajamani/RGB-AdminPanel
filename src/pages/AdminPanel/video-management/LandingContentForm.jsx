@@ -144,21 +144,40 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
           setIsUploading(false);
 
           try {
-            // Store only metadata, not the actual file data to avoid quota issues
-            const videoData = {
-              name: videoFile.name,
-              size: videoFile.size,
-              type: videoFile.type,
-              url: videoPreview, // Use the object URL (temporary)
-              uploadedAt: new Date().toISOString(),
-              isTemporary: true // Flag to indicate this is temporary storage
-            };
+            // Convert video file to base64 for persistent storage
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              try {
+                const videoData = {
+                  name: videoFile.name,
+                  size: videoFile.size,
+                  type: videoFile.type,
+                  url: e.target.result, // Base64 data URL for persistence
+                  uploadedAt: new Date().toISOString(),
+                  isPersistent: true
+                };
 
-            localStorage.setItem('landingPageVideo', JSON.stringify(videoData));
-            showAlert('Video uploaded successfully! Note: This is temporary storage for demo purposes.', 'success');
+                localStorage.setItem('landingPageVideo', JSON.stringify(videoData));
+                showAlert('Video uploaded and stored locally! It will persist across page refreshes.', 'success');
+              } catch (storageError) {
+                console.error('Storage error:', storageError);
+                // Fallback to temporary storage
+                const tempVideoData = {
+                  name: videoFile.name,
+                  size: videoFile.size,
+                  type: videoFile.type,
+                  url: videoPreview,
+                  uploadedAt: new Date().toISOString(),
+                  isTemporary: true
+                };
+                localStorage.setItem('landingPageVideo', JSON.stringify(tempVideoData));
+                showAlert('Video uploaded (temporary storage - will be lost on refresh due to size)', 'warning');
+              }
+            };
+            reader.readAsDataURL(videoFile);
           } catch (error) {
-            console.error('Storage error:', error);
-            showAlert('Storage quota exceeded. Video is available for this session only.', 'warning');
+            console.error('Upload error:', error);
+            showAlert('Upload failed. Please try again.', 'error');
           }
 
           return 100;
