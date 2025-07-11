@@ -260,6 +260,9 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
                   <video
                     src={videoPreview}
                     controls
+                    loop
+                    muted
+                    autoPlay
                     className="w-full h-64 object-cover rounded-lg bg-gray-100"
                     style={{ maxHeight: '300px' }}
                   />
@@ -272,6 +275,9 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
                   <video
                     src={currentVideo.url}
                     controls
+                    loop
+                    muted
+                    autoPlay
                     className="w-full h-64 object-cover rounded-lg bg-gray-100"
                     style={{ maxHeight: '300px' }}
                   />

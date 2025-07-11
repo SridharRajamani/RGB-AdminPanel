@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSystemSettings } from './SystemSettingsContext';
 
 const LanguageContext = createContext();
 
@@ -20,15 +19,24 @@ export const AVAILABLE_LANGUAGES = [
 ];
 
 export const LanguageProvider = ({ children }) => {
-  const { systemSettings } = useSystemSettings();
   const { i18n } = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState('en');
 
-  // Update language when system settings change
+  // Initialize language from localStorage or default
   useEffect(() => {
-    if (systemSettings.language && systemSettings.language !== i18n.language) {
-      i18n.changeLanguage(systemSettings.language);
+    const savedLanguage = localStorage.getItem('rotary_language') || 'en';
+    setCurrentLanguage(savedLanguage);
+    if (savedLanguage !== i18n.language) {
+      i18n.changeLanguage(savedLanguage);
     }
-  }, [systemSettings.language, i18n]);
+  }, [i18n]);
+
+  // Change language function
+  const changeLanguage = (langCode) => {
+    setCurrentLanguage(langCode);
+    localStorage.setItem('rotary_language', langCode);
+    i18n.changeLanguage(langCode);
+  };
 
   // Get language info
   const getLanguageInfo = (langCode = i18n.language) => {
@@ -69,7 +77,7 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const value = {
-    currentLanguage: i18n.language,
+    currentLanguage: currentLanguage,
     availableLanguages: AVAILABLE_LANGUAGES,
     getLanguageInfo,
     isRTL,
@@ -77,7 +85,7 @@ export const LanguageProvider = ({ children }) => {
     formatDate,
     getLocaleFromLanguage,
     getTextDirection,
-    changeLanguage: i18n.changeLanguage
+    changeLanguage
   };
 
   return (

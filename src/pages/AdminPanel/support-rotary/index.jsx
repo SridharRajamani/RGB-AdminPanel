@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../../components/ui/Header';
 import NavigationSidebar from '../../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../../components/ui/BreadcrumbNavigation';
-import AlertCenter from '../../../components/ui/AlertCenter';
+
 import Button from '../../../components/ui/Button';
 import SupportRotaryList from './components/SupportRotaryList';
 import CreateSupportRotaryModal from './components/CreateSupportRotaryModal';
@@ -11,13 +11,12 @@ import ViewSupportRotaryModal from './components/ViewSupportRotaryModal';
 import Icon from '../../../components/AppIcon';
 import useCoolAlert from '../../../hooks/useCoolAlert';
 
-const SupportRotaryManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }) => {
+const SupportRotaryManagement = ({ isSidebarVisible = true }) => {
   const alert = useCoolAlert();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedSupportProject, setSelectedSupportProject] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Support Rotary projects state
   const [supportProjects, setSupportProjects] = useState([
@@ -100,13 +99,10 @@ const SupportRotaryManagement = ({ isSidebarCollapsed = false, isSidebarVisible 
       }
     } catch (error) {
       console.error('Error loading support projects from localStorage:', error);
-      alert.error(
-        '⚠️ Loading Error',
-        'Failed to load saved support projects. Using default data.',
-        { autoClose: true, autoCloseDelay: 3000 }
-      );
+      // Don't use alert in useEffect to avoid infinite loops
+      console.warn('Failed to load saved support projects. Using default data.');
     }
-  }, [alert]);
+  }, []); // Empty dependency array - only run once on mount
 
   // Save support projects to localStorage whenever they change
   useEffect(() => {
@@ -316,38 +312,54 @@ const SupportRotaryManagement = ({ isSidebarCollapsed = false, isSidebarVisible 
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       <Header />
-      <NavigationSidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        isSidebarCollapsed={isSidebarCollapsed}
-        isSidebarVisible={isSidebarVisible}
-      /> 
+      <NavigationSidebar isVisible={isSidebarVisible} />
 
-      <main className={`transition-all duration-300 ${
-        isSidebarVisible
-          ? isSidebarCollapsed
-            ? 'ml-16'
-            : 'ml-64'
-          : 'ml-0'
-      }`}>
-        <div className="p-6">
+      <main style={{
+        marginLeft: isSidebarVisible ? '250px' : '0',
+        transition: 'margin-left 0.3s ease',
+        minHeight: '100vh',
+        backgroundColor: '#f8fafc'
+      }}>
+        <div style={{ padding: '24px' }}>
           {/* Breadcrumb Navigation */}
           <BreadcrumbNavigation items={breadcrumbItems} />
 
           {/* Page Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            marginBottom: '32px'
+          }}>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  background: 'linear-gradient(135deg, #10b981, #3b82f6)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
                   <Icon name="Heart" size={24} color="white" />
                 </div>
-                <h1 className="text-3xl font-heading font-bold text-text-primary">
+                <h1 style={{
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  color: '#111827',
+                  margin: 0
+                }}>
                   Support Rotary Management
                 </h1>
               </div>
-              <p className="text-text-secondary">
+              <p style={{
+                color: '#6b7280',
+                fontSize: '16px',
+                margin: 0
+              }}>
                 Manage and organize your club's support projects and donation campaigns
               </p>
             </div>
@@ -358,7 +370,10 @@ const SupportRotaryManagement = ({ isSidebarCollapsed = false, isSidebarVisible 
               iconName="Plus"
               iconPosition="left"
               onClick={() => setIsCreateModalOpen(true)}
-              className="shadow-lg"
+              style={{
+                alignSelf: 'flex-start',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+              }}
             >
               Create Support Project
             </Button>

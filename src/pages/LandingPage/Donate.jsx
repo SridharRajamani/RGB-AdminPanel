@@ -73,13 +73,21 @@ const SupportRotaryGulmhar = () => {
   const loadSupportProjects = () => {
     try {
       const savedProjects = localStorage.getItem('rotary_support_projects');
+
       if (savedProjects) {
         const parsedProjects = JSON.parse(savedProjects);
+
         if (Array.isArray(parsedProjects) && parsedProjects.length > 0) {
           // Filter only active projects for display
           const activeProjects = parsedProjects.filter(project => project.status === 'active');
-          setDonationData(activeProjects.length > 0 ? activeProjects : defaultDonationData);
+
+          // Show active projects, or all projects if no active ones
+          setDonationData(activeProjects.length > 0 ? activeProjects : parsedProjects);
+        } else {
+          setDonationData(defaultDonationData);
         }
+      } else {
+        setDonationData(defaultDonationData);
       }
     } catch (error) {
       console.error('Error loading support projects from localStorage:', error);

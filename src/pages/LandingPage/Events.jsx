@@ -53,8 +53,13 @@ const NewsCarousel = () => {
     const loadEvents = () => {
       try {
         const savedEvents = localStorage.getItem('rotary_events');
+        console.log('Loading events from localStorage:', savedEvents ? 'Found data' : 'No data');
         if (savedEvents) {
-          setDynamicEvents(JSON.parse(savedEvents));
+          const parsedEvents = JSON.parse(savedEvents);
+          console.log('Parsed events:', parsedEvents.length, 'events');
+          setDynamicEvents(parsedEvents);
+        } else {
+          console.log('No events found in localStorage');
         }
       } catch (error) {
         console.error('Error loading events from localStorage:', error);
@@ -240,6 +245,8 @@ const NewsCarousel = () => {
   return (
     <div className="news-carousel">
       <div className="LtstNup">Events</div>
+
+
 
       <div className="service-categories">
         <Swiper

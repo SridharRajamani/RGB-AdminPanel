@@ -42,11 +42,48 @@ const SimpleModal = ({ isOpen, onClose, onCreateEvent }) => {
 
 
 
+  // Function to fill sample data for testing
+  const fillSampleData = () => {
+    setTitle('Sample Event - ' + new Date().toLocaleTimeString());
+    setType('meeting');
+    setService('Club Service');
+    setDate('2024-12-25');
+    setTime('18:00');
+    setImage('');
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Debug: Log form data
+    console.log('Form submission data:', { title, type, service, date, time, image });
+
+    // Validate required fields
+    if (!title.trim()) {
+      alert('Please enter an event title');
+      return;
+    }
+    if (!type) {
+      alert('Please select an event type');
+      return;
+    }
+    if (!service) {
+      alert('Please select a service category');
+      return;
+    }
+    if (!date) {
+      alert('Please select a date');
+      return;
+    }
+    if (!time) {
+      alert('Please select a time');
+      return;
+    }
+
     const formData = { title, type, service, date, time, image };
+    console.log('Creating event with data:', formData);
     onCreateEvent(formData);
 
     // Clear form fields
@@ -58,6 +95,9 @@ const SimpleModal = ({ isOpen, onClose, onCreateEvent }) => {
     setImage('');
 
     onClose();
+
+    // Success message
+    alert('Event created successfully!');
   };
 
   return (
@@ -83,17 +123,34 @@ const SimpleModal = ({ isOpen, onClose, onCreateEvent }) => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
           <h2 style={{ margin: 0 }}>Create New Event</h2>
-          <button 
-            onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '20px',
-              cursor: 'pointer'
-            }}
-          >
-            ×
-          </button>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={fillSampleData}
+              style={{
+                padding: '5px 10px',
+                border: '1px solid #28a745',
+                borderRadius: '4px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              Fill Sample Data
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer'
+              }}
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>

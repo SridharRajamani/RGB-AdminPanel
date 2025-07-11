@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import Header from '../../../components/ui/Header';
 import NavigationSidebar from '../../../components/ui/NavigationSidebar';
 import BreadcrumbNavigation from '../../../components/ui/BreadcrumbNavigation';
-import AlertCenter from '../../../components/ui/AlertCenter';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 
@@ -22,8 +21,39 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
   const logoInputRef = useRef(null);
   const [logoDragOver, setLogoDragOver] = useState(false);
 
-  // Tab State
-  const [activeTab, setActiveTab] = useState('video'); // 'video' or 'logo'
+  // Tab State (for future use)
+  // const [activeTab, setActiveTab] = useState('video'); // 'video' or 'logo'
+
+  // Error handling
+  const [hasError, setHasError] = useState(false);
+
+  // Add error boundary
+  React.useEffect(() => {
+    const handleError = (error) => {
+      console.error('LandingContentForm Error:', error);
+      setHasError(true);
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
+          <p className="text-gray-600 mb-4">There was an error loading the landing content form.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Reload Page
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const breadcrumbItems = [
     { label: 'Dashboard', href: '/dashboard' },
@@ -96,46 +126,46 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
       return;
     }
 
+    // Check file size before processing to avoid quota exceeded error
+    const maxSize = 2 * 1024 * 1024; // 2MB limit for localStorage storage
+    if (videoFile.size > maxSize) {
+      showAlert('Video file is too large for browser storage. Please use a file smaller than 2MB.', 'error');
+      return;
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
 
-    // Convert video to base64 for PERMANENT storage
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64Data = e.target.result;
+    // For demo purposes, just store file metadata and use object URL
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsUploading(false);
 
-      // Simulate progress
-      const interval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setIsUploading(false);
-
-            // Save with base64 data (PERMANENT!)
+          try {
+            // Store only metadata, not the actual file data to avoid quota issues
             const videoData = {
               name: videoFile.name,
               size: videoFile.size,
               type: videoFile.type,
-              url: base64Data, // Base64 data - won't expire!
-              uploadedAt: new Date().toISOString()
+              url: videoPreview, // Use the object URL (temporary)
+              uploadedAt: new Date().toISOString(),
+              isTemporary: true // Flag to indicate this is temporary storage
             };
 
             localStorage.setItem('landingPageVideo', JSON.stringify(videoData));
-            showAlert('Video uploaded permanently! Page refresh won\'t remove it.', 'success');
-
-            return 100;
+            showAlert('Video uploaded successfully! Note: This is temporary storage for demo purposes.', 'success');
+          } catch (error) {
+            console.error('Storage error:', error);
+            showAlert('Storage quota exceeded. Video is available for this session only.', 'warning');
           }
-          return prev + 10;
-        });
-      }, 100);
-    };
 
-    reader.onerror = () => {
-      setIsUploading(false);
-      showAlert('Error uploading video', 'error');
-    };
-
-    reader.readAsDataURL(videoFile);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200); // Slower progress for better UX
   };
 
   const handleUpload = () => {
@@ -162,8 +192,24 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
   };
 
   const getCurrentVideo = () => {
-    const stored = localStorage.getItem('landingPageVideo');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('landingPageVideo');
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.error('Error reading video from storage:', error);
+      return null;
+    }
+  };
+
+  const clearAllStorage = () => {
+    if (window.confirm('This will clear all uploaded videos and logos. Are you sure?')) {
+      localStorage.removeItem('landingPageVideo');
+      localStorage.removeItem('landingPageLogos');
+      setVideoFile(null);
+      setVideoPreview(null);
+      setLogoFiles([]);
+      showAlert('All storage cleared successfully', 'success');
+    }
   };
 
   const currentVideo = getCurrentVideo();
@@ -221,57 +267,55 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
       return;
     }
 
+    // Check total file size to avoid quota issues
+    const totalSize = logoFiles.reduce((sum, file) => sum + file.size, 0);
+    const maxTotalSize = 1 * 1024 * 1024; // 1MB total limit for all logos
+
+    if (totalSize > maxTotalSize) {
+      showAlert('Total logo file size is too large. Please reduce the number or size of logos.', 'error');
+      return;
+    }
+
     setIsUploadingLogos(true);
     setLogoUploadProgress(0);
 
-    // Convert all logos to base64 for PERMANENT storage
-    const logoPromises = logoFiles.map(file => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          resolve({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            url: e.target.result, // Base64 data
-            uploadedAt: new Date().toISOString()
-          });
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+    // For demo purposes, create object URLs instead of base64 to avoid quota issues
+    const logoData = logoFiles.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file), // Use object URL (temporary)
+      uploadedAt: new Date().toISOString(),
+      isTemporary: true
+    }));
+
+    // Simulate progress
+    const interval = setInterval(() => {
+      setLogoUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsUploadingLogos(false);
+
+          try {
+            // Get existing logos and add new ones
+            const existingLogos = getStoredLogos();
+            const allLogos = [...existingLogos, ...logoData];
+
+            // Save to localStorage with error handling
+            localStorage.setItem('landingPageLogos', JSON.stringify(allLogos));
+
+            setLogoFiles([]); // Clear selected files
+            showAlert(`${logoData.length} logo(s) uploaded successfully! Note: These are temporary for demo purposes.`, 'success');
+          } catch (error) {
+            console.error('Storage error:', error);
+            showAlert('Storage quota exceeded. Logos are available for this session only.', 'warning');
+          }
+
+          return 100;
+        }
+        return prev + 10;
       });
-    });
-
-    Promise.all(logoPromises)
-      .then(logoData => {
-        // Simulate progress
-        const interval = setInterval(() => {
-          setLogoUploadProgress(prev => {
-            if (prev >= 100) {
-              clearInterval(interval);
-              setIsUploadingLogos(false);
-
-              // Get existing logos and add new ones
-              const existingLogos = getStoredLogos();
-              const allLogos = [...existingLogos, ...logoData];
-
-              // Save to localStorage (PERMANENT!)
-              localStorage.setItem('landingPageLogos', JSON.stringify(allLogos));
-
-              setLogoFiles([]); // Clear selected files
-              showAlert(`${logoData.length} logo(s) uploaded permanently!`, 'success');
-
-              return 100;
-            }
-            return prev + 10;
-          });
-        }, 100);
-      })
-      .catch(error => {
-        setIsUploadingLogos(false);
-        showAlert('Error uploading logos', 'error');
-        console.error('Logo upload error:', error);
-      });
+    }, 200);
   };
 
   const getStoredLogos = () => {
@@ -288,32 +332,75 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
 
   const storedLogos = getStoredLogos();
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <NavigationSidebar isCollapsed={isSidebarCollapsed} isVisible={isSidebarVisible} />
-      
-      <main className={`transition-all duration-300 ${
-        isSidebarVisible ? (isSidebarCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'
-      } pt-16`}>
-        <div className="p-6 max-w-7xl mx-auto">
-          <BreadcrumbNavigation items={breadcrumbItems} />
-          
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-text-primary mb-2">
-              Landing Page Video Management
-            </h1>
-            <p className="text-text-muted">
-              Upload and manage the background video for the landing page
-            </p>
-          </div>
+  try {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <NavigationSidebar isCollapsed={isSidebarCollapsed} isVisible={isSidebarVisible} />
 
-          <AlertCenter alerts={alerts} onDismiss={(id) => setAlerts(prev => prev.filter(a => a.id !== id))} />
+        <main className={`transition-all duration-300 ${
+          isSidebarVisible ? (isSidebarCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'
+        } pt-16`}>
+          <div className="p-6 max-w-7xl mx-auto">
+            <BreadcrumbNavigation items={breadcrumbItems} />
+
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Landing Page Video Management
+              </h1>
+              <p className="text-gray-600 mb-4">
+                Upload and manage the background video for the landing page
+              </p>
+
+              {/* Storage Usage Warning */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-center">
+                  <Icon name="AlertTriangle" size={16} className="text-yellow-600 mr-2" />
+                  <div className="text-sm">
+                    <p className="text-yellow-800 font-medium">Storage Limitations</p>
+                    <p className="text-yellow-700">
+                      Videos larger than 2MB and total logos larger than 1MB may cause storage issues.
+                      Use the "Clear All Storage" button if you encounter problems.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          {/* Custom Alert Display */}
+          {alerts.length > 0 && (
+            <div className="fixed top-20 right-4 space-y-2 z-50">
+              {alerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className={`px-4 py-3 rounded-lg shadow-lg border max-w-sm ${
+                    alert.type === 'success'
+                      ? 'bg-green-50 border-green-200 text-green-800'
+                      : alert.type === 'error'
+                      ? 'bg-red-50 border-red-200 text-red-800'
+                      : alert.type === 'warning'
+                      ? 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                      : 'bg-blue-50 border-blue-200 text-blue-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm">{alert.message}</p>
+                    <button
+                      onClick={() => setAlerts(prev => prev.filter(a => a.id !== alert.id))}
+                      className="ml-2 text-gray-400 hover:text-gray-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Upload Section */}
-            <div className="bg-surface border border-border rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Icon name="Upload" size={20} className="mr-2" />
                 Upload New Video
               </h2>
@@ -322,19 +409,19 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
                   dragOver
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border hover:border-primary/50'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-300 hover:border-blue-400'
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Icon name="Upload" size={48} className={`mx-auto mb-4 ${dragOver ? 'text-primary' : 'text-text-muted'}`} />
-                <p className="text-lg font-medium text-text-primary mb-2">
+                <Icon name="Upload" size={48} className={`mx-auto mb-4 ${dragOver ? 'text-blue-500' : 'text-gray-400'}`} />
+                <p className="text-lg font-medium text-gray-900 mb-2">
                   {dragOver ? 'Drop video here' : 'Click to browse or drag video here'}
                 </p>
-                <p className="text-sm text-text-muted mb-4">
+                <p className="text-sm text-gray-500 mb-4">
                   Supports MP4, WebM, AVI formats • Max size: 50MB
                 </p>
                 
@@ -388,13 +475,21 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
 
                   {/* Upload Button */}
                   {!isUploading && (
-                    <div className="mt-4">
+                    <div className="mt-4 space-y-2">
                       <Button
                         onClick={handleUpload}
                         iconName="Upload"
                         className="w-full"
                       >
                         Upload Video
+                      </Button>
+                      <Button
+                        onClick={clearAllStorage}
+                        variant="secondary"
+                        iconName="Trash"
+                        className="w-full text-sm"
+                      >
+                        Clear All Storage
                       </Button>
                     </div>
                   )}
@@ -414,6 +509,9 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
                   <video
                     src={videoPreview}
                     controls
+                    loop
+                    muted
+                    autoPlay
                     className="w-full h-64 object-cover rounded-lg bg-surface-hover"
                     style={{ maxHeight: '300px' }}
                   />
@@ -426,6 +524,9 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
                   <video
                     src={currentVideo.url}
                     controls
+                    loop
+                    muted
+                    autoPlay
                     className="w-full h-64 object-cover rounded-lg bg-surface-hover"
                     style={{ maxHeight: '300px' }}
                   />
@@ -629,9 +730,26 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
             </div>
           </div>
         </div>
-      </main>
-    </div>
-  );
+        </main>
+      </div>
+    );
+  } catch (error) {
+    console.error('Render error in LandingContentForm:', error);
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Render Error</h1>
+          <p className="text-gray-600 mb-4">There was an error rendering this page.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Reload Page
+          </button>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default LandingContentForm;

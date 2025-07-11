@@ -53,7 +53,8 @@
     "communications": "संचार",
     "settings": "सेटिंग्स",
     "reports": "रिपोर्ट",
-    "admin": "प्रशासक"
+    "admin": "प्रशासक",
+    "focus_areas": "फोकस क्षेत्र"
   },
   "dashboard": {
     "title": "डैशबोर्ड",

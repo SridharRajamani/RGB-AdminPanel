@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./LandingContent.scss";
 import Video from "../../Images/Clip2.mp4";
-import { FaCreditCard } from "react-icons/fa";
 import rotaryImages from '../../Images/rotaryImages.json';
-import PrimaryButton from '../../components/Buttons/PrimaryButton.jsx';
 import Marquee from "react-fast-marquee";
 import { RiMoneyRupeeCircleFill } from 'react-icons/ri';
 import { IoHeartSharp } from 'react-icons/io5';
-import Login from './Login.jsx';
-import { useNavigate } from 'react-router-dom';
 
 // const data = [
 //   {
@@ -36,10 +32,8 @@ import { useNavigate } from 'react-router-dom';
  
  
 const LandingContent = () => {
-  const [showLogin, setShowLogin] = useState(false);
   const [currentVideo, setCurrentVideo] = useState(Video);
   const [uploadedLogos, setUploadedLogos] = useState([]);
-  const navigate = useNavigate();
 
   // Check for uploaded video and logos from admin panel
   useEffect(() => {
@@ -103,57 +97,8 @@ const LandingContent = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowLogin(true), 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
-      {showLogin && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000
-          }}
-          onClick={e => {
-            if (e.target === e.currentTarget) setShowLogin(false);
-          }}
-        >
-          <button
-            style={{
-              position: 'fixed',
-              top: 20,
-              right: 30,
-              zIndex: 2100,
-              background: '#fff',
-              border: 'none',
-              borderRadius: 6,
-              padding: '0.3rem 0.7rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-            }}
-            onClick={() => setShowLogin(false)}
-          >
-            Skip
-          </button>
-          <div style={{position: 'relative', width: '70vw', height: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-              <Login />
-            </div>
-          </div>
-        </div>
-      )}
       <div className="landing-container" >
 
       <div className="landing-content">

@@ -170,6 +170,7 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
   useEffect(() => {
     try {
       localStorage.setItem('rotary_events', JSON.stringify(events));
+      console.log('Events saved to localStorage:', events.length, 'events');
       // Dispatch custom event to notify landing page
       window.dispatchEvent(new CustomEvent('eventsDataUpdated'));
     } catch (error) {
@@ -177,13 +178,31 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
     }
   }, [events]);
 
+  // Debug function to check localStorage
+  const debugLocalStorage = () => {
+    const saved = localStorage.getItem('rotary_events');
+    console.log('Current localStorage data:', saved ? JSON.parse(saved) : 'No data');
+  };
+
+  // Function to clear all events (for testing)
+  const clearAllEvents = () => {
+    if (window.confirm('Are you sure you want to clear all events? This cannot be undone.')) {
+      setEvents([]);
+      localStorage.removeItem('rotary_events');
+      console.log('All events cleared');
+    }
+  };
+
   const handleDateSelect = (date) => {
     setSelectedDate(date);
   };
 
   const handleCreateEvent = (eventData) => {
+    // Generate a unique ID based on timestamp and random number
+    const newId = Date.now() + Math.floor(Math.random() * 1000);
+
     const newEvent = {
-      id: events.length + 1,
+      id: newId,
       ...eventData,
       location: eventData.location || 'TBD',
       description: eventData.description || 'No description provided',
@@ -196,6 +215,9 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
       service: eventData.service || 'Club Service'
     };
     setEvents([...events, newEvent]);
+
+    // Show success alert
+    console.log('Event created successfully:', newEvent);
   };
 
   const handleEditEvent = (eventId) => {
@@ -217,15 +239,21 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
   const handleDuplicateEvent = (eventId) => {
     const eventToDuplicate = events.find(event => event.id === eventId);
     if (eventToDuplicate) {
+      // Generate a unique ID for the duplicated event
+      const newId = Date.now() + Math.floor(Math.random() * 1000);
+
       const duplicatedEvent = {
         ...eventToDuplicate,
-        id: events.length + 1,
+        id: newId,
         title: `${eventToDuplicate.title} (Copy)`,
         status: 'pending',
         attendeeCount: 0,
         pendingApprovals: 0
       };
       setEvents([...events, duplicatedEvent]);
+
+      // Show success alert
+      console.log('Event duplicated successfully:', duplicatedEvent);
     }
   };
 
@@ -271,16 +299,34 @@ const EventManagement = ({ isSidebarCollapsed = false, isSidebarVisible = true }
               </p>
             </div>
             
-            <Button
-              variant="primary"
-              size="lg"
-              iconName="Plus"
-              iconPosition="left"
-              onClick={() => setIsCreateModalOpen(true)}
-              className="shadow-lg"
-            >
-              Create New Event
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={debugLocalStorage}
+                className="text-xs"
+              >
+                Debug Storage
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={clearAllEvents}
+                className="text-xs"
+              >
+                Clear All
+              </Button>
+              <Button
+                variant="primary"
+                size="lg"
+                iconName="Plus"
+                iconPosition="left"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="shadow-lg"
+              >
+                Create New Event
+              </Button>
+            </div>
           </div>
 
           {/* Main Content Grid */}

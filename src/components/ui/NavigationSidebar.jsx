@@ -6,29 +6,57 @@ import { useTranslation } from 'react-i18next';
 import Icon from '../AppIcon';
 import Button from './Button';
 
-const NavigationSidebar = () => {
+const NavigationSidebar = ({
+  isCollapsed: propIsCollapsed,
+  isVisible: propIsVisible,
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isSidebarCollapsed,
+  isSidebarVisible,
+  onToggle
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(propIsCollapsed || isSidebarCollapsed || false);
   const location = useLocation();
   const { user, logout, hasPermission } = useAuth();
   const { isDarkMode, appearanceSettings } = useTheme();
   const { t } = useTranslation();
 
+  // Sync with prop changes
+  useEffect(() => {
+    if (propIsCollapsed !== undefined) {
+      setSidebarCollapsed(propIsCollapsed);
+    } else if (isSidebarCollapsed !== undefined) {
+      setSidebarCollapsed(isSidebarCollapsed);
+    }
+  }, [propIsCollapsed, isSidebarCollapsed]);
+
   // Toggle sidebar function
   const toggleSidebar = () => {
-    setSidebarCollapsed(prev => {
-      const newState = !prev;
-      // Dispatch event to update parent components
-      const event = new CustomEvent('sidebarStateChanged', {
-        detail: { collapsed: newState }
+    if (onToggle) {
+      onToggle();
+    } else if (setIsSidebarOpen) {
+      setIsSidebarOpen(!isSidebarOpen);
+    } else {
+      setSidebarCollapsed(prev => {
+        const newState = !prev;
+        // Dispatch event to update parent components
+        const event = new CustomEvent('sidebarStateChanged', {
+          detail: { collapsed: newState }
+        });
+        window.dispatchEvent(event);
+        return newState;
       });
-      window.dispatchEvent(event);
-      return newState;
-    });
+    }
   };
 
-  // Debug render
-  console.log('🚀 NavigationSidebar RENDER - sidebarCollapsed:', sidebarCollapsed);
+  // Determine visibility
+  const isVisible = propIsVisible !== undefined ? propIsVisible : (isSidebarVisible !== undefined ? isSidebarVisible : true);
+
+  // Debug render (only in development)
+  if (import.meta.env.DEV) {
+    console.log('🚀 NavigationSidebar RENDER - sidebarCollapsed:', sidebarCollapsed, 'isVisible:', isVisible);
+  }
 
   const navigationItems = [
     {
@@ -360,8 +388,9 @@ const NavigationSidebar = () => {
     <>
 
 
-      {/* Sidebar - always visible on all screen sizes */}
-      <aside className={`fixed inset-y-0 left-0 z-40 ${sidebarCollapsed ? 'w-20' : 'w-64'} flex flex-col transition-all duration-300 ${isDarkMode ? 'dark' : ''}`}>
+      {/* Sidebar - visibility controlled by props */}
+      {isVisible && (
+        <aside className={`fixed inset-y-0 left-0 z-40 ${sidebarCollapsed ? 'w-20' : 'w-64'} flex flex-col transition-all duration-300 ${isDarkMode ? 'dark' : ''}`}>
         <div
           className="flex flex-col h-full border-r"
           style={{
@@ -466,6 +495,7 @@ const NavigationSidebar = () => {
           </div>
         </div>
       </aside>
+      )}
     </>
   );
 };

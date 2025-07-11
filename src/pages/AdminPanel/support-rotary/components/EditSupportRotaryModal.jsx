@@ -39,18 +39,20 @@ const EditSupportRotaryModal = ({ isOpen, onClose, onUpdateSupportProject, suppo
   // Populate form when supportProject changes
   useEffect(() => {
     if (supportProject && isOpen) {
-      setFormData({
+      const newFormData = {
         title: supportProject.title || '',
         description: supportProject.description || '',
         image: supportProject.image || '',
         targetAmount: supportProject.targetAmount?.toString() || '',
-        amountRaised: supportProject.amountRaised?.toString() || '',
-        donorCount: supportProject.donorCount?.toString() || '',
+        amountRaised: supportProject.amountRaised?.toString() || '0',
+        donorCount: supportProject.donorCount?.toString() || '0',
         category: supportProject.category || '',
         priority: supportProject.priority || 'medium',
         status: supportProject.status || 'active'
-      });
+      };
+      setFormData(newFormData);
       setImagePreview(supportProject.image || '');
+      setErrors({}); // Clear any existing errors
     }
   }, [supportProject, isOpen]);
 
@@ -59,38 +61,54 @@ const EditSupportRotaryModal = ({ isOpen, onClose, onUpdateSupportProject, suppo
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.title.trim()) {
+    // Title validation
+    if (!formData.title || !formData.title.trim()) {
       newErrors.title = 'Project title is required';
-    } else if (formData.title.length < 3) {
+    } else if (formData.title.trim().length < 3) {
       newErrors.title = 'Title must be at least 3 characters long';
     }
 
-    if (!formData.description.trim()) {
+    // Description validation
+    if (!formData.description || !formData.description.trim()) {
       newErrors.description = 'Project description is required';
-    } else if (formData.description.length < 10) {
+    } else if (formData.description.trim().length < 10) {
       newErrors.description = 'Description must be at least 10 characters long';
     }
 
-    if (!formData.targetAmount) {
+    // Target amount validation
+    if (!formData.targetAmount || formData.targetAmount.toString().trim() === '') {
       newErrors.targetAmount = 'Target amount is required';
-    } else if (isNaN(formData.targetAmount) || parseFloat(formData.targetAmount) <= 0) {
-      newErrors.targetAmount = 'Target amount must be a positive number';
+    } else {
+      const targetAmount = parseFloat(formData.targetAmount);
+      if (isNaN(targetAmount) || targetAmount <= 0) {
+        newErrors.targetAmount = 'Target amount must be a positive number';
+      }
     }
 
-    if (!formData.category) {
+    // Category validation
+    if (!formData.category || formData.category.trim() === '') {
       newErrors.category = 'Category is required';
     }
 
-    if (formData.amountRaised && (isNaN(formData.amountRaised) || parseFloat(formData.amountRaised) < 0)) {
-      newErrors.amountRaised = 'Amount raised must be a non-negative number';
+    // Amount raised validation (optional)
+    if (formData.amountRaised && formData.amountRaised.toString().trim() !== '') {
+      const amountRaised = parseFloat(formData.amountRaised);
+      if (isNaN(amountRaised) || amountRaised < 0) {
+        newErrors.amountRaised = 'Amount raised must be a non-negative number';
+      }
     }
 
-    if (formData.donorCount && (isNaN(formData.donorCount) || parseInt(formData.donorCount) < 0)) {
-      newErrors.donorCount = 'Donor count must be a non-negative number';
+    // Donor count validation (optional)
+    if (formData.donorCount && formData.donorCount.toString().trim() !== '') {
+      const donorCount = parseInt(formData.donorCount);
+      if (isNaN(donorCount) || donorCount < 0) {
+        newErrors.donorCount = 'Donor count must be a non-negative number';
+      }
     }
 
-    if (formData.image && !isValidImageUrl(formData.image)) {
-      newErrors.image = 'Please enter a valid image URL';
+    // Image validation (optional)
+    if (formData.image && formData.image.trim() && !isValidImageUrl(formData.image)) {
+      newErrors.image = 'Please enter a valid image URL (jpg, png, gif, webp, svg)';
     }
 
     setErrors(newErrors);
@@ -98,9 +116,12 @@ const EditSupportRotaryModal = ({ isOpen, onClose, onUpdateSupportProject, suppo
   };
 
   const isValidImageUrl = (url) => {
+    if (!url || url.trim() === '') return true; // Allow empty URLs
+
     try {
       new URL(url);
-      return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
+      // More flexible image validation - allow more formats and data URLs
+      return /\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff)$/i.test(url) || url.startsWith('data:image/');
     } catch {
       return false;
     }
@@ -182,12 +203,18 @@ const EditSupportRotaryModal = ({ isOpen, onClose, onUpdateSupportProject, suppo
       // Simulate processing time
       await new Promise(resolve => setTimeout(resolve, 1500));
 
+      // Prepare the updated project data with proper type conversion
       const updatedProject = {
         ...supportProject,
-        ...formData,
-        targetAmount: parseFloat(formData.targetAmount),
-        amountRaised: parseFloat(formData.amountRaised) || 0,
-        donorCount: parseInt(formData.donorCount) || 0
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        image: formData.image.trim(),
+        category: formData.category,
+        priority: formData.priority,
+        status: formData.status,
+        targetAmount: parseFloat(formData.targetAmount) || 0,
+        amountRaised: formData.amountRaised ? parseFloat(formData.amountRaised) : 0,
+        donorCount: formData.donorCount ? parseInt(formData.donorCount) : 0
       };
 
       await onUpdateSupportProject(updatedProject);

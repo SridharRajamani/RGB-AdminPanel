@@ -28,7 +28,7 @@ function App() {
   }, []);
 
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID_HERE">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "demo-client-id"}>
       <ThemeProvider>
         <SystemSettingsProvider>
           <LanguageProvider>

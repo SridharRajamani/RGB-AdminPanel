@@ -38,6 +38,8 @@ import About from "pages/AdminPanel/about";
 import FocusAreasManagement from "pages/AdminPanel/focus-areas";
 import SupportRotaryManagement from "pages/AdminPanel/support-rotary";
 import MemberInquisitiveManagement from "pages/AdminPanel/member-inquisitive";
+import LocalStorageDebugger from "debug/LocalStorageDebugger";
+
 
 // AppContent component with loading and navigation logic
 function AppContent({ isSidebarCollapsed, isSidebarVisible }) {
@@ -67,7 +69,9 @@ function AppContent({ isSidebarCollapsed, isSidebarVisible }) {
                           location.pathname.startsWith('/profile') ||
                           location.pathname.startsWith('/help-support') ||
                           location.pathname.startsWith('/landing-content-form') ||
-                          location.pathname.startsWith('/cool-alert-demo');
+                          location.pathname.startsWith('/cool-alert-demo') ||
+                          location.pathname.startsWith('/support-rotary') ||
+                          location.pathname.startsWith('/debug');
 
   return (
     <>
@@ -185,6 +189,18 @@ function AppContent({ isSidebarCollapsed, isSidebarVisible }) {
           <Route path="/cool-alert-demo" element={
             <ProtectedRoute>
               <CoolAlertDemo />
+            </ProtectedRoute>
+          } />
+
+          {/* Debug Routes */}
+          <Route path="/debug/localstorage" element={
+            <ProtectedRoute>
+              <LocalStorageDebugger />
+            </ProtectedRoute>
+          } />
+          <Route path="/support-rotary" element={
+            <ProtectedRoute requiredPermission="project_management">
+              <SupportRotaryManagement isSidebarCollapsed={isSidebarCollapsed} isSidebarVisible={isSidebarVisible} />
             </ProtectedRoute>
           } />
 
