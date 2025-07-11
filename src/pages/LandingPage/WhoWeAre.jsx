@@ -5,7 +5,7 @@ import { Navigation } from 'swiper/modules';
 import { GoChevronLeft, GoChevronRight } from 'react-icons/go';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import Star from '../../Images/Star.png';
+import Star from '../../Images/star.png';
 import Roc from '../../Images/roc.png';
 import Dim from '../../Images/dim.png';
 

@@ -6,6 +6,7 @@ import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import './Login.scss';
 import { FaGoogle } from 'react-icons/fa';
 import PreLoader from '../../components/PreLoader/PreLoader';
+import RotaryLogo from '../../Images/NewRGBLogo2.svg';
 
 const heroSlides = [
   {
@@ -107,7 +108,7 @@ const Login = () => {
             {/* Header */}
             <div className="hero-header">
               <div className="logo">
-                <img src="/src/Images/NewRGBLogo2.svg" alt="Rotary Logo" className="logo-icon" style={{width: '12rem', height: 'auto'}} />
+                <img src={RotaryLogo} alt="Rotary Logo" className="logo-icon" style={{width: '12rem', height: 'auto'}} />
               </div>
               <Link to="/" className="back-link">
                 <ArrowLeft size={16} />
