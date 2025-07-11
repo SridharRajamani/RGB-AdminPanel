@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./LandingContent.scss";
 import Video from "../../Images/Clip2.mp4";
+import { FaCreditCard } from "react-icons/fa";
 import rotaryImages from '../../Images/rotaryImages.json';
+import PrimaryButton from '../../components/Buttons/PrimaryButton.jsx';
 import Marquee from "react-fast-marquee";
 import { RiMoneyRupeeCircleFill } from 'react-icons/ri';
 import { IoHeartSharp } from 'react-icons/io5';
+import Login from './Login.jsx';
 
 // const data = [
 //   {
@@ -32,6 +35,7 @@ import { IoHeartSharp } from 'react-icons/io5';
  
  
 const LandingContent = () => {
+  const [showLogin, setShowLogin] = useState(false);
   const [currentVideo, setCurrentVideo] = useState(Video);
   const [uploadedLogos, setUploadedLogos] = useState([]);
 
@@ -47,10 +51,11 @@ const LandingContent = () => {
           }
         } catch (error) {
           console.error('Error parsing stored video data:', error);
-          // Fallback to default video
+          // Fallback to default local video
           setCurrentVideo(Video);
         }
       } else {
+        // Use local video file stored in src/Images/Clip2.mp4 as default
         setCurrentVideo(Video);
       }
     };
@@ -60,12 +65,14 @@ const LandingContent = () => {
       if (storedLogos) {
         try {
           const logoData = JSON.parse(storedLogos);
+          console.log('Loaded logo data:', logoData);
           setUploadedLogos(logoData || []);
         } catch (error) {
           console.error('Error parsing stored logo data:', error);
           setUploadedLogos([]);
         }
       } else {
+        console.log('No logos found in localStorage');
         setUploadedLogos([]);
       }
     };
@@ -97,8 +104,57 @@ const LandingContent = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setShowLogin(true), 5000);
+  //   return () => clearTimeout(timer);
+  // }, []);
+
   return (
     <>
+      {showLogin && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000
+          }}
+          onClick={e => {
+            if (e.target === e.currentTarget) setShowLogin(false);
+          }}
+        >
+          <button
+            style={{
+              position: 'fixed',
+              top: 20,
+              right: 30,
+              zIndex: 2100,
+              background: '#fff',
+              border: 'none',
+              borderRadius: 6,
+              padding: '0.3rem 0.7rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+            }}
+            onClick={() => setShowLogin(false)}
+          >
+            Skip
+          </button>
+          <div style={{position: 'relative', width: '70vw', height: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <Login />
+            </div>
+          </div>
+        </div>
+      )}
       <div className="landing-container" >
 
       <div className="landing-content">
@@ -152,22 +208,32 @@ const LandingContent = () => {
         <Marquee gradient={true} >
           {/* Only show uploaded logos from admin panel */}
           {uploadedLogos.length > 0 ? (
-            uploadedLogos.map((logo, index) => (
-              <img
-                key={`uploaded-${index}`}
-                src={logo.url}
-                alt={logo.name || `Uploaded Logo ${index + 1}`}
-                style={{
-                  borderRadius: "12px",
-                  objectFit: "contain",
-                  marginRight: "10px",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  padding: "8px"
-                }}
-                width={100}
-                height={100}
-              />
-            ))
+            uploadedLogos.map((logo, index) => {
+              console.log(`Rendering logo ${index}:`, logo.name, 'URL type:', logo.url?.substring(0, 20) + '...');
+              return (
+                <img
+                  key={`uploaded-${index}`}
+                  src={logo.url}
+                  alt={logo.name || `Uploaded Logo ${index + 1}`}
+                  style={{
+                    borderRadius: "12px",
+                    objectFit: "contain",
+                    marginRight: "10px",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    padding: "8px"
+                  }}
+                  width={100}
+                  height={100}
+                  onError={(e) => {
+                    console.error('Failed to load logo:', logo.name, 'URL:', logo.url?.substring(0, 50) + '...');
+                    e.target.style.display = 'none';
+                  }}
+                  onLoad={() => {
+                    console.log('Successfully loaded logo:', logo.name);
+                  }}
+                />
+              );
+            })
           ) : (
             /* Show default rotary images only if no logos are uploaded */
             rotaryImages.map((image, index) => (

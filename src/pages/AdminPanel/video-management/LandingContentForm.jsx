@@ -261,7 +261,7 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
     showAlert('Logo removed', 'info');
   };
 
-  const uploadLogos = () => {
+  const uploadLogos = async () => {
     if (logoFiles.length === 0) {
       showAlert('Please select logo files first', 'error');
       return;
@@ -269,7 +269,7 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
 
     // Check total file size to avoid quota issues
     const totalSize = logoFiles.reduce((sum, file) => sum + file.size, 0);
-    const maxTotalSize = 1 * 1024 * 1024; // 1MB total limit for all logos
+    const maxTotalSize = 2 * 1024 * 1024; // 2MB total limit for all logos
 
     if (totalSize > maxTotalSize) {
       showAlert('Total logo file size is too large. Please reduce the number or size of logos.', 'error');
@@ -279,48 +279,85 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
     setIsUploadingLogos(true);
     setLogoUploadProgress(0);
 
-    // For demo purposes, create object URLs instead of base64 to avoid quota issues
-    const logoData = logoFiles.map(file => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      url: URL.createObjectURL(file), // Use object URL (temporary)
-      uploadedAt: new Date().toISOString(),
-      isTemporary: true
-    }));
-
-    // Simulate progress
-    const interval = setInterval(() => {
-      setLogoUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploadingLogos(false);
-
-          try {
-            // Get existing logos and add new ones
-            const existingLogos = getStoredLogos();
-            const allLogos = [...existingLogos, ...logoData];
-
-            // Save to localStorage with error handling
-            localStorage.setItem('landingPageLogos', JSON.stringify(allLogos));
-
-            setLogoFiles([]); // Clear selected files
-            showAlert(`${logoData.length} logo(s) uploaded successfully! Note: These are temporary for demo purposes.`, 'success');
-          } catch (error) {
-            console.error('Storage error:', error);
-            showAlert('Storage quota exceeded. Logos are available for this session only.', 'warning');
-          }
-
-          return 100;
-        }
-        return prev + 10;
+    try {
+      // Convert files to base64 data URLs for persistent storage
+      const logoDataPromises = logoFiles.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              url: reader.result, // Base64 data URL
+              uploadedAt: new Date().toISOString(),
+              isTemporary: false
+            });
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
       });
-    }, 200);
+
+      const logoData = await Promise.all(logoDataPromises);
+
+      // Simulate progress
+      const interval = setInterval(() => {
+        setLogoUploadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsUploadingLogos(false);
+
+            try {
+              // Get existing logos and add new ones
+              const existingLogos = getStoredLogos();
+              const allLogos = [...existingLogos, ...logoData];
+
+              // Save to localStorage with error handling
+              localStorage.setItem('landingPageLogos', JSON.stringify(allLogos));
+
+              setLogoFiles([]); // Clear selected files
+              showAlert(`${logoData.length} logo(s) uploaded successfully!`, 'success');
+            } catch (error) {
+              console.error('Storage error:', error);
+              showAlert('Storage quota exceeded. Please try with smaller images.', 'error');
+            }
+
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+    } catch (error) {
+      console.error('Error converting files:', error);
+      setIsUploadingLogos(false);
+      showAlert('Error processing logo files. Please try again.', 'error');
+    }
   };
 
   const getStoredLogos = () => {
     const stored = localStorage.getItem('landingPageLogos');
-    return stored ? JSON.parse(stored) : [];
+    if (stored) {
+      try {
+        const logos = JSON.parse(stored);
+        // Filter out any logos with invalid URLs (blob URLs that are no longer valid)
+        const validLogos = logos.filter(logo => {
+          return logo.url && (logo.url.startsWith('data:') || logo.url.startsWith('http'));
+        });
+
+        // If we filtered out invalid logos, update localStorage
+        if (validLogos.length !== logos.length) {
+          localStorage.setItem('landingPageLogos', JSON.stringify(validLogos));
+        }
+
+        return validLogos;
+      } catch (error) {
+        console.error('Error parsing stored logos:', error);
+        return [];
+      }
+    }
+    return [];
   };
 
   const removeStoredLogo = (index) => {
@@ -328,6 +365,11 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
     const updatedLogos = logos.filter((_, i) => i !== index);
     localStorage.setItem('landingPageLogos', JSON.stringify(updatedLogos));
     showAlert('Logo removed from storage', 'info');
+  };
+
+  const clearAllLogos = () => {
+    localStorage.removeItem('landingPageLogos');
+    showAlert('All logos cleared from storage', 'info');
   };
 
   const storedLogos = getStoredLogos();
@@ -694,31 +736,41 @@ const LandingContentForm = ({ isSidebarCollapsed, isSidebarVisible }) => {
                 </h2>
 
                 {storedLogos.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-                    {storedLogos.map((logo, index) => (
-                      <div key={index} className="relative group">
-                        <div className="aspect-square bg-white rounded-lg p-2 border border-border">
-                          <img
-                            src={logo.url}
-                            alt={logo.name}
-                            className="w-full h-full object-contain"
-                          />
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                      {storedLogos.map((logo, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square bg-white rounded-lg p-2 border border-border">
+                            <img
+                              src={logo.url}
+                              alt={logo.name}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeStoredLogo(index)}
+                              iconName="X"
+                              className="bg-red-500 text-white hover:bg-red-600"
+                            />
+                          </div>
+                          <p className="text-xs text-text-muted mt-1 truncate" title={logo.name}>
+                            {logo.name}
+                          </p>
                         </div>
-                        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeStoredLogo(index)}
-                            iconName="X"
-                            className="bg-red-500 text-white hover:bg-red-600"
-                          />
-                        </div>
-                        <p className="text-xs text-text-muted mt-1 truncate" title={logo.name}>
-                          {logo.name}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                    <Button
+                      onClick={clearAllLogos}
+                      variant="outline"
+                      iconName="Trash"
+                      className="w-full mt-4 text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      Clear All Logos
+                    </Button>
+                  </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-48 text-text-muted">
                     <Icon name="Image" size={48} className="mb-4" />
